@@ -37,64 +37,13 @@
         <div class="content">
             <el-tabs v-model="activeName">
                 <el-tab-pane label="库存" name="first">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
+                    <storage-list></storage-list>
                 </el-tab-pane>
                 <el-tab-pane label="入库记录" name="second">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
+                    <storage-record-list></storage-record-list>
                 </el-tab-pane>
                 <el-tab-pane label="出库记录" name="third">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
+                    <storage-record-list></storage-record-list>
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -102,14 +51,12 @@
 </template>
 
 <script>
+  import StorageList from './components/StorageList';
+  import storageRecordList from './../storageRecord/index';
+
   export default {
     name: "storage",
-    props: {
-      isEdit: {
-        type: Boolean,
-        default: false
-      }
-    },
+    components: { StorageList, storageRecordList },
     data() {
       return {
         activeName: 'first',

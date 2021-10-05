@@ -20,8 +20,8 @@
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="企业名称：">
-            <el-input v-model="listQuery.name" class="input-width" placeholder="企业名称"></el-input>
+          <el-form-item label="建议名称：">
+            <el-input v-model="listQuery.name" class="input-width" placeholder="建议名称"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -31,54 +31,41 @@
       <span>数据列表</span>
       <el-button
         class="btn-add"
-        @click="handleAddEnterprise()"
+        @click="handleAddAdvice()"
         size="mini">
         添加
       </el-button>
     </el-card>
     <div class="table-container">
-      <el-table ref="infoEnterpriseTable"
+      <el-table ref="infoAdviceTable"
                 :data="list"
                 style="width: 100%;"
                 @selection-change="handleSelectionChange"
                 v-loading="listLoading" border>
         <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="企业名称" width="160" align="center">
+        <el-table-column label="建议名称" width="160" align="center">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
-        <el-table-column label="描述" align="center">
+        <el-table-column label="区块名称" align="center">
+          <template slot-scope="scope">{{scope.row.blockName}}</template>
+        </el-table-column>
+        <el-table-column label="种类品种名称" align="center">
+          <template slot-scope="scope">{{scope.row.productCategoryName}}</template>
+        </el-table-column>
+        <el-table-column label="建议描述" align="center">
           <template slot-scope="scope">{{scope.row.description}}</template>
-        </el-table-column>
-        <el-table-column label="成立时间" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.creationTime | formatCreationTime}}</template>
-        </el-table-column>
-        <el-table-column label="经营内容" align="center">
-          <template slot-scope="scope">{{scope.row.businessContent}}</template>
-        </el-table-column>
-        <el-table-column label="法人" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.legalPerson}}</template>
-        </el-table-column>
-        <el-table-column label="年产值" width="120" align="center">
-          <template slot-scope="scope">
-            <span v-if="scope.row.annualOutputValue">￥</span>
-            {{scope.row.annualOutputValue}}</template>
-        </el-table-column>
-        <el-table-column label="年产量" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.annualYield}}
-            <span v-if="scope.row.annualYield">kg</span>
-          </template>
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
             <p>
               <el-button
                 size="mini"
-                @click="handleUpdateEnterprise(scope.$index, scope.row)">编辑
+                @click="handleUpdateAdvice(scope.$index, scope.row)">编辑
               </el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDeleteEnterprise(scope.$index, scope.row)">删除
+                @click="handleDeleteAdvice(scope.$index, scope.row)">删除
               </el-button>
             </p>
           </template>
@@ -100,7 +87,7 @@
   </div>
 </template>
 <script>
-  import {fetchList, deleteEnterprise} from '@/api/enterprise';
+  import {fetchList, deleteAdvice} from '@/api/advice';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
     pageNum: 1,
@@ -135,8 +122,8 @@
         this.listQuery.pageNum = 1;
         this.getList();
       },
-      handleAddEnterprise() {
-        this.$router.push({path:'/info/addEnterprise'});
+      handleAddAdvice() {
+        this.$router.push({path:'/farm/addAdvice'});
       },
       handleSelectionChange(val){
         this.multipleSelection = val;
@@ -158,16 +145,16 @@
           this.total = response.data.total;
         });
       },
-      handleUpdateEnterprise(index, row) {
-        this.$router.push({path:'/info/updateEnterprise',query:{id:row.id}});
+      handleUpdateAdvice(index, row) {
+        this.$router.push({path:'/farm/updateAdvice',query:{id:row.id}});
       },
-      handleDeleteEnterprise(index, row) {
+      handleDeleteAdvice(index, row) {
         this.$confirm('是否要进行删除操作?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteEnterprise(row.id).then(response => {
+          deleteAdvice(row.id).then(response => {
             this.$message({
               message: '删除成功',
               type: 'success',

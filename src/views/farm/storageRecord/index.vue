@@ -1,86 +1,65 @@
 <template> 
-  <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <i class="el-icon-search"></i>
-        <span>筛选搜索</span>
-        <el-button
-          style="float:right"
-          type="primary"
-          @click="handleSearchList()"
-          size="small">
-          查询搜索
-        </el-button>
-        <el-button
-          style="float:right;margin-right: 15px"
-          @click="handleResetSearch()"
-          size="small">
-          重置
-        </el-button>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="区块名称：">
-            <el-input v-model="listQuery.name" class="input-width" placeholder="区块名称"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
-    <el-card class="operate-container" shadow="never">
-      <i class="el-icon-tickets"></i>
-      <span>数据列表</span>
-      <el-button
-        class="btn-add"
-        @click="handleAddSale()"
-        size="mini">
-        添加
-      </el-button>
-    </el-card>
+<div>
+    <el-input v-model="listQuery.blockName" class="input-width" placeholder="区域名称"></el-input>
+    <el-button
+        type="primary"
+        @click="handleSearchList()"
+        >
+        查询搜索
+    </el-button>
+    <el-button
+    style="float:right"
+    type="primary"
+    @click="handleAddStorageRecord()">
+    添加入库
+    </el-button>
     <div class="table-container">
-      <el-table ref="infoSaleTable"
+      <el-table ref="infoStorageRecordTable"
                 :data="list"
                 style="width: 100%;"
                 @selection-change="handleSelectionChange"
                 v-loading="listLoading" border>
         <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="区块名称" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.blockName}}</template>
+        <el-table-column label="农资名称" width="160" align="center">
+          <template slot-scope="scope">{{scope.row.storageName}}</template>
         </el-table-column>
-        <el-table-column label="种植品种名称" align="center">
+        <el-table-column label="农资类型" align="center">
           <template slot-scope="scope">{{scope.row.productCategoryName}}</template>
         </el-table-column>
-        <el-table-column label="销售时间" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.saleTime}}</template>
-        </el-table-column>
-        <el-table-column label="目的地" align="center">
-          <template slot-scope="scope">{{scope.row.destination}}</template>
-        </el-table-column>
-        <el-table-column label="客户名称" align="center">
-          <template slot-scope="scope">{{scope.row.customer}}</template>
-        </el-table-column>
-        <el-table-column label="客户电话" align="center">
-          <template slot-scope="scope">{{scope.row.customerPhone}}</template>
-        </el-table-column>
-        <el-table-column label="数量" align="center">
+        <el-table-column label="数量" width="120" align="center">
           <template slot-scope="scope">{{scope.row.quantity}}</template>
         </el-table-column>
-        <el-table-column label="单价" align="center">
-          <template slot-scope="scope">{{scope.row.unitPrice}}</template>
+        <el-table-column label="生产厂商" align="center">
+          <template slot-scope="scope">{{scope.row.manufacturer}}</template>
         </el-table-column>
-        <el-table-column label="金额" align="center">
-          <template slot-scope="scope">{{scope.row.amount}}</template>
+        <el-table-column label="价格(元)" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.price}}</template>
+        </el-table-column>
+        <el-table-column label="备注" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.remark}}</template>
+        </el-table-column>
+        <el-table-column label="入库日期" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.recordTime | formatRecordTime}}</template>
+        </el-table-column>
+        <el-table-column label="状态" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.status}}</template>
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
             <p>
               <el-button
                 size="mini"
-                @click="handleUpdateSale(scope.$index, scope.row)">编辑
+                @click="handleUpdateStorageRecord(scope.$index, scope.row)">编辑
               </el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDeleteSale(scope.$index, scope.row)">删除
+                @click="handleDeleteStorageRecord(scope.$index, scope.row)">删除
+              </el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="handleConfirmStorageRecord(scope.$index, scope.row)">确认
               </el-button>
             </p>
           </template>
@@ -99,10 +78,10 @@
         :total="total">
       </el-pagination>
     </div>
-  </div>
+</div>
 </template>
 <script>
-  import {fetchList, deleteSale} from '@/api/sale';
+  import {fetchList, deleteStorageRecord} from '@/api/storageRecord';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
     pageNum: 1,
@@ -110,7 +89,7 @@
     name: null,
   };
   export default {
-    name: "saleList",
+    name: "storageRecordList",
     components:{},
     data() {
       return {
@@ -124,9 +103,9 @@
       this.getList();
     },
     filters: {
-      formatSaleTime(time) {
+      formatRecordTime(time) {
         let date = new Date(time);
-        return formatDate(date, 'yyyy-MM-dd HH:mm:ss')
+        return formatDate(date, 'yyyy-MM-dd')
       },
     },
     methods: {
@@ -137,8 +116,8 @@
         this.listQuery.pageNum = 1;
         this.getList();
       },
-      handleAddSale() {
-        this.$router.push({path:'/farm/addSale'});
+      handleAddStorageRecord() {
+        this.$router.push({path:'/info/addStorageRecord'});
       },
       handleSelectionChange(val){
         this.multipleSelection = val;
@@ -160,16 +139,16 @@
           this.total = response.data.total;
         });
       },
-      handleUpdateSale(index, row) {
-        this.$router.push({path:'/farm/updateSale',query:{id:row.id}});
+      handleUpdateStorageRecord(index, row) {
+        this.$router.push({path:'/info/updateStorageRecord',query:{id:row.id}});
       },
-      handleDeleteSale(index, row) {
+      handleDeleteStorageRecord(index, row) {
         this.$confirm('是否要进行删除操作?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteSale(row.id).then(response => {
+          deleteStorageRecord(row.id).then(response => {
             this.$message({
               message: '删除成功',
               type: 'success',

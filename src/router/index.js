@@ -88,10 +88,38 @@ export const asyncRouterMap = [
         meta: {title: '区试管理', icon: 'product-list'}
       },
       {
+        path: 'addInspection',
+        name: 'addInspection',
+        component: () => import('@/views/farm/inspection/add'),
+        meta: {title: '新增区试数据'},
+        hidden: true
+      },
+      {
+        path: 'updateInspection',
+        name: 'updateInspection',
+        component: () => import('@/views/farm/inspection/update'),
+        meta: {title: '编辑区试数据'},
+        hidden: true
+      },
+      {
         path: 'advice',
         name: 'advice',
         component: () => import('@/views/farm/advice/index'),
         meta: {title: '农事建议', icon: 'product-list'}
+      },
+      {
+        path: 'addAdvice',
+        name: 'addAdvice',
+        component: () => import('@/views/farm/advice/add'),
+        meta: {title: '新增农事建议数据'},
+        hidden: true
+      },
+      {
+        path: 'updateAdvice',
+        name: 'updateAdvice',
+        component: () => import('@/views/farm/advice/update'),
+        meta: {title: '编辑农事建议数据'},
+        hidden: true
       },
       {
         path: 'storage',
@@ -100,10 +128,58 @@ export const asyncRouterMap = [
         meta: {title: '仓储管理', icon: 'product-list'}
       },
       {
+        path: 'addStorage',
+        name: 'addStorage',
+        component: () => import('@/views/farm/storage/add'),
+        meta: {title: '新增农资库存'},
+        hidden: true
+      },
+      {
+        path: 'updateStorage',
+        name: 'updateStorage',
+        component: () => import('@/views/farm/storage/update'),
+        meta: {title: '编辑农资库存'},
+        hidden: true
+      },
+      {
+        path: 'viewStorage',
+        name: 'viewStorage',
+        component: () => import('@/views/farm/storage/view'),
+        meta: {title: '农资库存详情'},
+        hidden: true
+      },
+      {
+        path: 'storageRecord',
+        name: 'storageRecord',
+        component: () => import('@/views/farm/storageRecord/index'),
+        meta: {title: '仓储记录', icon: 'product-list'}
+      },
+      {
+        path: 'addStorageRecord',
+        name: 'addStorageRecord',
+        component: () => import('@/views/farm/storageRecord/add'),
+        meta: {title: '新增仓储记录'},
+        hidden: true
+      },
+      {
         path: 'sale',
         name: 'sale',
         component: () => import('@/views/farm/sale/index'),
         meta: {title: '销售管理', icon: 'product-list'}
+      },
+      {
+        path: 'addSale',
+        name: 'addSale',
+        component: () => import('@/views/farm/sale/add'),
+        meta: {title: '新增销售数据'},
+        hidden: true
+      },
+      {
+        path: 'updateSale',
+        name: 'updateSale',
+        component: () => import('@/views/farm/sale/update'),
+        meta: {title: '编辑销售数据'},
+        hidden: true
       },
     ]
   },
