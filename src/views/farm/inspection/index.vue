@@ -20,8 +20,8 @@
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="区域名称：">
-            <el-input v-model="listQuery.name" class="input-width" placeholder="区域名称"></el-input>
+          <el-form-item label="区块名称：">
+            <block-select @block="getBlock"></block-select>
           </el-form-item>
         </el-form>
       </div>
@@ -96,6 +96,7 @@
   </div>
 </template>
 <script>
+  import BlockSelect from './../../info/block/components/BlockSelect';
   import {fetchList, deleteInspection} from '@/api/inspection';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
@@ -105,7 +106,7 @@
   };
   export default {
     name: "inspectionList",
-    components:{},
+    components:{BlockSelect},
     data() {
       return {
         listQuery: Object.assign({}, defaultListQuery),
@@ -145,6 +146,13 @@
       handleCurrentChange(val){
         this.listQuery.pageNum = val;
         this.getList();
+      },
+      getBlock(block) {
+          if (block) {
+            this.listQuery.blockId = block.id;
+          } else {
+            this.listQuery.blockId = null;
+          }
       },
       getList() {
         this.listLoading = true;

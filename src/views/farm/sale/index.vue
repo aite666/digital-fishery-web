@@ -21,7 +21,7 @@
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
           <el-form-item label="区块名称：">
-            <el-input v-model="listQuery.name" class="input-width" placeholder="区块名称"></el-input>
+            <block-select @block="getBlock"></block-select>
           </el-form-item>
         </el-form>
       </div>
@@ -46,7 +46,7 @@
         <el-table-column label="区块名称" width="160" align="center">
           <template slot-scope="scope">{{scope.row.blockName}}</template>
         </el-table-column>
-        <el-table-column label="种植品种名称" align="center">
+        <el-table-column label="养殖品种名称" align="center">
           <template slot-scope="scope">{{scope.row.productCategoryName}}</template>
         </el-table-column>
         <el-table-column label="销售时间" width="120" align="center">
@@ -102,6 +102,7 @@
   </div>
 </template>
 <script>
+  import BlockSelect from './../../info/block/components/BlockSelect';
   import {fetchList, deleteSale} from '@/api/sale';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
@@ -111,7 +112,7 @@
   };
   export default {
     name: "saleList",
-    components:{},
+    components:{BlockSelect},
     data() {
       return {
         listQuery: Object.assign({}, defaultListQuery),
@@ -130,6 +131,13 @@
       },
     },
     methods: {
+      getBlock(block) {
+          if (block) {
+            this.listQuery.blockId = block.id;
+          } else {
+            this.listQuery.blockId = null;
+          }
+      },
       handleResetSearch() {
         this.listQuery = Object.assign({}, defaultListQuery);
       },

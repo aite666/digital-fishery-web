@@ -108,6 +108,12 @@
     created() {
       this.getList();
     },
+    watch:{
+      blockId(val, valOld){
+        this.blockId = val;
+        this.getList();
+      }
+    },
     filters: {
       formatFarmTime(time) {
         let date = new Date(time);
@@ -136,9 +142,7 @@
       },
       getList() {
         this.listLoading = true;
-        if (this.blockId) {
-          this.listQuery.blockId = this.blockId;
-        }
+        this.listQuery.blockId = this.blockId;
         fetchList(this.listQuery).then(response => {
           this.listLoading = false;
           this.list = response.data.list;

@@ -4,7 +4,7 @@
       <el-form-item label="区块名称：" prop="blockName">
         <el-input v-model="saleDetail.blockName"></el-input>
       </el-form-item>
-      <el-form-item label="种植品种名称：" prop="productCategoryName">
+      <el-form-item label="养殖品种名称：" prop="productCategoryName">
         <el-input v-model="saleDetail.productCategoryName"></el-input>
       </el-form-item>
       <el-form-item label="销售时间：" prop="saleTime">

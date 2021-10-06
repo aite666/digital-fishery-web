@@ -2,7 +2,7 @@
   <el-card class="form-container" shadow="never">
     <el-form :model="inspectionDetail" :rules="rules" ref="inspectionForm" label-width="120px">
       <el-form-item label="区域名称：" prop="name">
-        <el-input v-model="inspectionDetail.blockName"></el-input>
+        <block-select @block="getBlock"></block-select>
       </el-form-item>
       <el-form-item label="区试时间：">
         <el-date-picker
@@ -52,6 +52,7 @@
 </template>
 
 <script>
+  import BlockSelect from './../../../info/block/components/BlockSelect';
   import {fetchList,createInspection,updateInspection,deleteInspection,getInspectionDetail} from '@/api/inspection'
 
   const defaultInspectionDetail= {
@@ -66,6 +67,7 @@
   };
   export default {
     name: "InspectionDetail",
+    components:{BlockSelect},
     props: {
       isEdit: {
         type: Boolean,
@@ -109,6 +111,15 @@
     computed:{
     },
     methods: {
+      getBlock(block) {
+          if (block) {
+            this.inspectionDetail.blockId = block.id;
+            this.inspectionDetail.blockName = block.name;
+          } else {
+            this.inspectionDetail.blockId = null;
+            this.inspectionDetail.blockName = null;
+          }
+      },
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {

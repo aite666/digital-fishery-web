@@ -5,10 +5,10 @@
         <el-input v-model="adviceDetail.name"></el-input>
       </el-form-item>
       <el-form-item label="区块名称：" prop="blockName">
-        <el-input v-model="adviceDetail.blockName"></el-input>
+        <block-select @block="getBlock"></block-select>
       </el-form-item>
-      <el-form-item label="种植种类名称：" prop="productCategoryName">
-        <el-input v-model="adviceDetail.productCategoryName"></el-input>
+      <el-form-item label="养殖种类名称：" prop="productCategoryName">
+        <fish-cate-select @fish-cate="getFishCate"></fish-cate-select>
       </el-form-item>
       <el-form-item label="描述：" prop="description">
         <el-input
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+  import BlockSelect from './../../../info/block/components/BlockSelect';
+  import FishCateSelect from './../../../info/productCate/components/FishCateSelect';
   import {fetchList,createAdvice,updateAdvice,deleteAdvice,getAdviceDetail} from '@/api/advice'
 
   const defaultAdviceDetail= {
@@ -39,6 +41,7 @@
   };
   export default {
     name: "AdviceDetail",
+    components:{BlockSelect,FishCateSelect},
     props: {
       isEdit: {
         type: Boolean,
@@ -71,6 +74,24 @@
     computed:{
     },
     methods: {
+      getBlock(block) {
+          if (block) {
+            this.adviceDetail.blockId = block.id;
+            this.adviceDetail.blockName = block.name;
+          } else {
+            this.adviceDetail.blockId = null;
+            this.adviceDetail.blockName = null;
+          }
+      },
+      getFishCate(fishCate) {
+        if (fishCate) {
+          this.adviceDetail.productCategoryId = fishCate.id;
+          this.adviceDetail.productCategoryName = fishCate.id;
+        } else {
+          this.adviceDetail.productCategoryId = null;
+          this.adviceDetail.productCategoryName = null;
+        }
+      },
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {

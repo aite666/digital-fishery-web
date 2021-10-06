@@ -49,6 +49,7 @@
             <el-tabs v-model="activeName">
                 <el-tab-pane label="投放批次" name="first">
                   <batch-list ref="batchList" @update-batch="handleUpdate" 
+                  :blockId="blockSelectedId"
                   ></batch-list>
                 </el-tab-pane>
                 <el-tab-pane label="出塘记录" name="second">
@@ -107,13 +108,7 @@
               <el-input v-model="batch.blockName" class="form-width" disabled></el-input>
             </el-form-item>
             <el-form-item label="种类：">
-              <el-select v-model="batch.productCategoryId" class="form-width">
-                <el-option v-for="item of productCategoryList" 
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                </el-option>
-            </el-select>
+              <fish-cate-select @fish-cate="getFishCate"></fish-cate-select>
             </el-form-item>
             <el-form-item label="来源单位：">
               <el-input v-model="batch.origin" class="form-width"></el-input>
@@ -150,17 +145,17 @@
 
 <script>
   import BlockSelect from './../../info/block/components/BlockSelect';
+  import FishCateSelect from './../../info/productCate/components/FishCateSelect';
   import BatchList from './components/BatchList';
   import {getList,createBatch,updateBatch,deleteBatch,getBatchDetail,getProductCategoryList} from '@/api/batch';
-  import {fetchListWithParentName} from '@/api/productCate';
 
   const defaultBatch = {
     id: null,
     code: '',
-    blockId: 0,
+    blockId: null,
     blockName: null,
-    productCategoryId: 0,
     productCategoryId: null,
+    productCategoryName: null,
     farmTime: null,
     quantity: 0,
     unitPrice: 0,
@@ -169,7 +164,7 @@
   };
   export default {
     name: "product",
-    components: { BlockSelect, BatchList },
+    components: { BlockSelect, BatchList, FishCateSelect },
     data() {
       return {
         activeName: 'first',
@@ -178,7 +173,6 @@
         dialogVisible: false,
         isEdit: false,
         batch: Object.assign({}, defaultBatch),
-        productCategoryList: [],
         productCategoryStats: [],
         productCategoryNum: 0,
         batchNum: 0,
@@ -203,17 +197,6 @@
       }
     },
     created() {
-      fetchListWithParentName('养殖鱼类').then(response => {
-        let list = response.data;
-        let productCategoryList = [];
-        for (let item of list) {
-          productCategoryList.push({
-            'id': item['id'],
-            'name': item['name'],
-          })
-        }
-        this.productCategoryList = productCategoryList;
-      });
       this.getProductCategoryStats();
     },
     computed:{
@@ -226,7 +209,14 @@
           } else {
             this.blockSelectedId = null;
           }
-          this.getList();
+          this.getProductCategoryStats();
+      },
+      getFishCate(fishCate) {
+        if (fishCate) {
+          this.batch.productCategoryId = fishCate.id;
+        } else {
+          this.batch.productCategoryId = null;
+        }
       },
       getProductCategoryStats() {
         getProductCategoryList(this.blockSelectedId).then(response => {
@@ -309,7 +299,7 @@
       getList() {
         this.getProductCategoryStats();
         let childBatchList = this.$refs.batchList;
-        childBatchList.blockId = this.blockSelectedId;
+        // childBatchList.blockId = this.blockSelectedId;
         childBatchList.getList();
       }
     }
