@@ -197,8 +197,22 @@ export const asyncRouterMap = [
         meta: {title: '区块管理', icon: 'product-list'}
       },
       {
-        path: 'blockView',
-        name: 'blockView',
+        path: 'addBlock',
+        name: 'addBlock',
+        component: () => import('@/views/info/block/add'),
+        meta: {title: '新增区块信息'},
+        hidden: true
+      },
+      {
+        path: 'updateBlock',
+        name: 'updateBlock',
+        component: () => import('@/views/info/block/update'),
+        meta: {title: '编辑区块信息'},
+        hidden: true
+      },
+      {
+        path: 'viewBlock',
+        name: 'viewBlock',
         component: () => import('@/views/info/block/view'),
         meta: {title: '区块详情'},
         hidden: true

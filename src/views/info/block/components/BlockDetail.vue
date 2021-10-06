@@ -1,130 +1,37 @@
 <template>
-    <el-card shadow="never">
-        <div class="d-f">
-            <div class="left d-f">
-                <div class="area-name">区块1</div>
-            </div>
-            <div class="right">
-                <ul class="list d-f">
-                    <li>
-                        <div class="icon"><i class="el-icon-s-tools"></i></div>
-                        <div class="info">
-                            <h3>10</h3>
-                            <span>设备数</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="icon"><i class="el-icon-grape"></i></div>
-                        <div class="info">
-                            <h3>2</h3>
-                            <span>种养品种数</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="icon"><i class="el-icon-refrigerator"></i></div>
-                        <div class="info">
-                            <h3>30</h3>
-                            <span>种养批次数</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="icon"><i class="el-icon-user"></i></div>
-                        <div class="info">
-                            <h3>1</h3>
-                            <span>管理员人数</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="content">
-            <el-tabs v-model="activeName">
-                <el-tab-pane label="设备" name="first">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
-                </el-tab-pane>
-                <el-tab-pane label="种养品种" name="second">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
-                </el-tab-pane>
-                <el-tab-pane label="种养批次" name="third">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
-                </el-tab-pane>
-                <el-tab-pane label="管理员" name="fourth">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
-                </el-tab-pane>
-            </el-tabs>
-        </div>
-    </el-card>
+  <el-card class="form-container" shadow="never">
+    <el-form :model="blockDetail" :rules="rules" ref="blockForm" label-width="120px">
+      <el-form-item label="区块名称：" prop="name">
+        <el-input v-model="blockDetail.name"></el-input>
+      </el-form-item>
+      <el-form-item label="描述：" prop="description">
+        <el-input
+          :autosize="{ minRows: 6}"
+          v-model="blockDetail.description"
+          type="textarea"
+          placeholder="请输入描述"></el-input>
+      </el-form-item>
+      <el-form-item label="面积：" prop="area">
+        <el-input-number v-model="blockDetail.area"
+        :min="0" :max="100000000000000000"></el-input-number> 亩
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit('blockForm')">提交</el-button>
+        <el-button v-if="!isEdit" @click="resetForm('blockForm')">重置</el-button>
+        <el-button @click="back()">返回上一级</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
 </template>
 
 <script>
+  import {fetchList,createBlock,updateBlock,deleteBlock,getBlockDetail} from '@/api/block'
+
+  const defaultBlockDetail= {
+    name: '',
+    description: '',
+    area: 0,
+  };
   export default {
     name: "BlockDetail",
     props: {
@@ -135,82 +42,79 @@
     },
     data() {
       return {
-        activeName: 'first',
-        tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
-      }
+        blockDetail: Object.assign({}, defaultBlockDetail),
+        rules: {
+          name: [
+            {required: true, message: '请输入区块名称', trigger: 'blur'},
+            {min: 2, max: 255, message: '长度在 2 到 100 个字符', trigger: 'blur'}
+          ],
+          description: [
+            {min: 2, max: 1000, message: '长度在 2 到 1000 个字符', trigger: 'blur'}
+          ],
+        }
+      };
     },
     created() {
+      if (this.isEdit) {
+        getBlockDetail(this.$route.query.id).then(response => {
+          this.blockDetail = response.data;
+        });
+      } else {
+        this.blockDetail = Object.assign({}, defaultBlockDetail);
+      }
     },
     computed:{
     },
     methods: {
+      onSubmit(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$confirm('是否提交数据', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              if (this.isEdit) {
+                updateBlock(this.$route.query.id, this.blockDetail).then(response => {
+                  this.$message({
+                    message: '修改成功',
+                    type: 'success',
+                    duration: 1000
+                  });
+                  this.$router.back();
+                });
+              } else {
+                createBlock(this.blockDetail).then(response => {
+                  this.$refs[formName].resetFields();
+                  this.resetForm(formName);
+                  this.$message({
+                    message: '提交成功',
+                    type: 'success',
+                    duration: 1000
+                  });
+                  this.$router.back();
+                });
+              }
+            });
+          } else {
+            this.$message({
+              message: '验证失败',
+              type: 'error',
+              duration: 1000
+            });
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      back() {
+        this.$router.back();
+      }
     }
   }
 </script>
 
 <style scoped>
-.left {
-    /* width: 255px; */
-    height: 80px;
-    border-right: 1px solid #ebeef5;
-}
-.d-f {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-}
-.left .area-name {
-    width: 100%;
-    font-size: 20px;
-    font-weight: 500;
-    padding-left: 40px;
-    padding-right: 60px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.right .list {
-    padding-left: 10px;
-}
-.right .list li {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
-    align-items: flex-start;
-    padding-left: 50px;
-}
-.right .list li .icon {
-    margin-right: 20px;
-    font-size: 34px;
-    padding-top: 13px;
-}
-.right .list li .info {
-    color: #171717;
-}
-.content {
-    margin-top:20px;
-}
 </style>

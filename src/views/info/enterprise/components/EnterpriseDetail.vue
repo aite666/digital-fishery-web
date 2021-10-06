@@ -15,7 +15,7 @@
         <el-date-picker
             class="input-width"
             v-model="enterpriseDetail.creationTime"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="date"
             placeholder="请选择时间">
         </el-date-picker>

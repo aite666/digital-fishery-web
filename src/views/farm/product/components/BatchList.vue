@@ -1,79 +1,65 @@
 <template> 
-  <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <i class="el-icon-search"></i>
-        <span>筛选搜索</span>
-        <el-button
-          style="float:right"
-          type="primary"
-          @click="handleSearchList()"
-          size="small">
-          查询搜索
-        </el-button>
-        <el-button
-          style="float:right;margin-right: 15px"
-          @click="handleResetSearch()"
-          size="small">
-          重置
-        </el-button>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="告警类型：">
-            <el-input v-model="listQuery.name" class="input-width" placeholder="告警类型"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
-    <el-card class="operate-container" shadow="never">
-      <i class="el-icon-tickets"></i>
-      <span>数据列表</span>
-      <el-button
-        class="btn-add"
-        @click="handleAddEnterprise()"
-        size="mini">
-        添加
-      </el-button>
-    </el-card>
+<div>
+    <el-input v-model="listQuery.code" class="input-width" placeholder="批次号"></el-input>
+    <el-button
+        type="primary"
+        @click="handleSearchList()"
+        >
+        查询搜索
+    </el-button>
     <div class="table-container">
-      <el-table ref="infoEnterpriseTable"
+      <el-table ref="batchTable"
                 :data="list"
                 style="width: 100%;"
                 @selection-change="handleSelectionChange"
                 v-loading="listLoading" border>
         <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="告警时间" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.creationTime | formatCreationTime}}</template>
+        <el-table-column label="批次号" width="160" align="center">
+          <template slot-scope="scope">{{scope.row.code}}</template>
         </el-table-column>
-        <el-table-column label="描述" align="center">
-          <template slot-scope="scope">{{scope.row.businessContent}}</template>
+        <el-table-column label="所在区块" align="center">
+          <template slot-scope="scope">{{scope.row.blockName}}</template>
         </el-table-column>
-        <el-table-column label="告警类型" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.legalPerson}}</template>
+        <el-table-column label="养殖品种" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.productCategoryName}}</template>
         </el-table-column>
-        <el-table-column label="接受人" width="120" align="center">
-          <template slot-scope="scope">
-            <span v-if="scope.row.annualOutputValue">￥</span>
-            {{scope.row.annualOutputValue}}</template>
+        <el-table-column label="养殖日期" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.farmTime | formatFarmTime}}</template>
         </el-table-column>
-        <el-table-column label="所在区块" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.annualYield}}
-            <span v-if="scope.row.annualYield">kg</span>
-          </template>
+        <el-table-column label="来源单位" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.origin}}</template>
+        </el-table-column>
+        <el-table-column label="数量" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.quantity}}</template>
+        </el-table-column>
+        <el-table-column label="单价" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.unitPrice}}</template>
+        </el-table-column>
+        <el-table-column label="金额" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.amount}}</template>
+        </el-table-column>
+        <el-table-column label="养殖状态" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.status}}</template>
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
-            <p>
+            <p style="margin-bottom: 4px;margin-top: 4px;">
               <el-button
                 size="mini"
-                @click="handleUpdateEnterprise(scope.$index, scope.row)">编辑
+                @click="handleUpdateBatch(scope.$index, scope.row)">编辑
               </el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDeleteEnterprise(scope.$index, scope.row)">删除
+                @click="handleDeleteBatch(scope.$index, scope.row)">删除
               </el-button>
+            </p>
+            <p style="margin-bottom: 4px;margin-top: 4px;">
+                <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleFinishBatch(scope.$index, scope.row)">养殖结束
+                </el-button>
             </p>
           </template>
         </el-table-column>
@@ -91,19 +77,26 @@
         :total="total">
       </el-pagination>
     </div>
-  </div>
+</div>
 </template>
 <script>
-  import {fetchList, deleteEnterprise} from '@/api/enterprise';
+  import {fetchList, deleteBatch} from '@/api/batch';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
     pageNum: 1,
     pageSize: 10,
-    name: null,
+    code: null,
+    blockId: null,
   };
   export default {
-    name: "infoEnterpriseList",
+    name: "BatchList",
     components:{},
+    props: {
+        blockId: {
+          type: Number,
+          default: null
+        }
+    },
     data() {
       return {
         listQuery: Object.assign({}, defaultListQuery),
@@ -116,7 +109,7 @@
       this.getList();
     },
     filters: {
-      formatCreationTime(time) {
+      formatFarmTime(time) {
         let date = new Date(time);
         return formatDate(date, 'yyyy-MM-dd')
       },
@@ -128,9 +121,6 @@
       handleSearchList() {
         this.listQuery.pageNum = 1;
         this.getList();
-      },
-      handleAddEnterprise() {
-        this.$router.push({path:'/info/addEnterprise'});
       },
       handleSelectionChange(val){
         this.multipleSelection = val;
@@ -146,22 +136,25 @@
       },
       getList() {
         this.listLoading = true;
+        if (this.blockId) {
+          this.listQuery.blockId = this.blockId;
+        }
         fetchList(this.listQuery).then(response => {
           this.listLoading = false;
-          // this.list = response.data.list;
-          // this.total = response.data.total;
+          this.list = response.data.list;
+          this.total = response.data.total;
         });
       },
-      handleUpdateEnterprise(index, row) {
-        this.$router.push({path:'/info/updateEnterprise',query:{id:row.id}});
+      handleUpdateBatch(index, row) {
+          this.$emit('update-batch', index, row);
       },
-      handleDeleteEnterprise(index, row) {
+      handleDeleteBatch(index, row) {
         this.$confirm('是否要进行删除操作?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteEnterprise(row.id).then(response => {
+          deleteBatch(row.id).then(response => {
             this.$message({
               message: '删除成功',
               type: 'success',
@@ -179,5 +172,3 @@
     width: 203px;
   }
 </style>
-
-

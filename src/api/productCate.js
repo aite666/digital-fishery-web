@@ -58,3 +58,11 @@ export function fetchListWithChildren() {
     method:'get'
   })
 }
+
+export function fetchListWithParentName(parentName) {
+  return request({
+    url:'/productCategory/list/withParentName',
+    method:'get',
+    params: {'parentName': parentName}
+  })
+}

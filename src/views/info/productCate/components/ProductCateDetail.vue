@@ -31,6 +31,7 @@
       <el-form-item>
         <el-button type="primary" @click="onSubmit('productCateFrom')">提交</el-button>
         <el-button v-if="!isEdit" @click="resetForm('productCateFrom')">重置</el-button>
+        <el-button @click="back()">返回上一级</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -130,6 +131,9 @@
         this.productCate = Object.assign({}, defaultProductCate);
         this.getSelectProductCateList();
       },
+      back() {
+        this.$router.back();
+      }
     },
     filters: {
       filterLabelFilter(index) {

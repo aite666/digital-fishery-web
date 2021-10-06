@@ -1,11 +1,11 @@
 <template> 
-  <block-detail></block-detail>
+  <block-view></block-view>
 </template>
 <script>
-  import BlockDetail from './components/BlockDetail'
+  import BlockView from './components/BlockView'
   export default {
-    name: 'blockView',
-    components: { BlockDetail }
+    name: 'viewBlock',
+    components: { BlockView }
   }
 </script>
 <style>
