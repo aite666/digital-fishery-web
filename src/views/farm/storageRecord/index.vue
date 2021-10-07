@@ -27,10 +27,10 @@
           <template slot-scope="scope">{{scope.row.productCategoryName}}</template>
         </el-table-column>
         <el-table-column label="数量" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.quantity}}</template>
+          <template slot-scope="scope">{{scope.row.quantity + scope.row.storageUnit}}</template>
         </el-table-column>
         <el-table-column label="生产厂商" align="center">
-          <template slot-scope="scope">{{scope.row.manufacturer}}</template>
+          <template slot-scope="scope">{{scope.row.storageManufacturer}}</template>
         </el-table-column>
         <el-table-column label="价格(元)" width="120" align="center">
           <template slot-scope="scope">{{scope.row.price}}</template>
@@ -42,11 +42,20 @@
           <template slot-scope="scope">{{scope.row.recordTime | formatRecordTime}}</template>
         </el-table-column>
         <el-table-column label="状态" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.status}}</template>
-        </el-table-column>
-        <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
-            <p>
+            <div class="scope-item" v-if="scope.row.status == 1">
+              <span class="color-dot" style="background: rgb(21, 185, 192);"></span>
+              <span>已确认</span>
+            </div>
+            <div class="scope-item" v-if="scope.row.status == 0">
+              <span class="color-dot" style="background: rgb(153, 153, 153);"></span>
+              <span>未确认</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="250" align="center">
+          <template slot-scope="scope">
+            <p v-if="scope.row.status == 0">
               <el-button
                 size="mini"
                 @click="handleUpdateStorageRecord(scope.$index, scope.row)">编辑
@@ -58,7 +67,7 @@
               </el-button>
               <el-button
                 size="mini"
-                type="danger"
+                type="primary"
                 @click="handleConfirmStorageRecord(scope.$index, scope.row)">确认
               </el-button>
             </p>
@@ -81,7 +90,7 @@
 </div>
 </template>
 <script>
-  import {fetchList, deleteStorageRecord} from '@/api/storageRecord';
+  import {fetchList, deleteStorageRecord, confirmStorageRecord} from '@/api/storageRecord';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
     pageNum: 1,
@@ -117,7 +126,7 @@
         this.getList();
       },
       handleAddStorageRecord() {
-        this.$router.push({path:'/info/addStorageRecord'});
+        this.$router.push({path:'/farm/addStorageRecord'});
       },
       handleSelectionChange(val){
         this.multipleSelection = val;
@@ -140,7 +149,24 @@
         });
       },
       handleUpdateStorageRecord(index, row) {
-        this.$router.push({path:'/info/updateStorageRecord',query:{id:row.id}});
+        this.$router.push({path:'/farm/updateStorageRecord',query:{id:row.id}});
+      },
+      handleConfirmStorageRecord(index, row) {
+        this.$confirm('是否要进行确认操作?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          confirmStorageRecord(row.id).then(response => {
+            this.$message({
+              message: '确认成功',
+              type: 'success',
+              duration: 1000
+            });
+            this.getList();
+            this.$emit('confirm');
+          });
+        });
       },
       handleDeleteStorageRecord(index, row) {
         this.$confirm('是否要进行删除操作?', '提示', {
@@ -165,6 +191,22 @@
   .input-width {
     width: 203px;
   }
+  .scope-item {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .scope-item span {
+    display: inline-block;
+  }
+  .color-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 8px;
+    margin-right: 6px;
+}
 </style>
 
 

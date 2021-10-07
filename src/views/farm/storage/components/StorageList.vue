@@ -2,23 +2,9 @@
 <div>
     <el-input v-model="listQuery.name" class="name-query"
         placeholder="请输入农资名称"></el-input>
-    <el-select v-model="listQuery.productCategoryId">
-        <el-option
-            key="all"
-            label="全部类型"
-            value="all">
-        </el-option>
-        <el-option
-            key="1"
-            label="HP"
-            value="1">
-        </el-option>
-        <el-option
-            key="2"
-            label="温度"
-            value="2">
-        </el-option>
-    </el-select>
+    <product-cate-select @product-cate="getProductCate"
+      @product-cate-info="getProductCateInfo"
+    ></product-cate-select>
     <el-button
         type="primary"
         @click="handleSearchList()"
@@ -48,10 +34,10 @@
                 </el-button>
                 </div>
                 <div @click="handleViewStorage(item.id)" class="card-hover">
-                <div class="card-content-item">类型：{{ item.productCategoryId }}</div>
+                <div class="card-content-item">类型：{{ getproductCateName(item.productCategoryId) }}</div>
                 <div class="card-content-item">品牌：{{ item.brand }}</div>
                 <div class="card-content-item">生产厂商：{{ item.manufacturer }}</div>
-                <div class="card-content-item">库存：{{ item.quantity }}</div>
+                <div class="card-content-item">库存：{{ item.quantity }} {{ item.unit }}</div>
                 </div>
             </el-card>
         </el-col>
@@ -71,6 +57,7 @@
 </div>
 </template>
 <script>
+  import ProductCateSelect from './../../../info/productCate/components/ProductCateSelect';
   import {fetchList, deleteStorage} from '@/api/storage';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
@@ -80,7 +67,7 @@
   };
   export default {
     name: "StorageList",
-    components:{},
+    components:{ProductCateSelect},
     data() {
       return {
         listQuery: Object.assign({}, defaultListQuery),
@@ -88,6 +75,7 @@
         list: null,
         total: null,
         thresholdVisible: false,
+        productCateInfo: {},
       }
     },
     created() {
@@ -100,6 +88,25 @@
       },
     },
     methods: {
+      getProductCate(productCate) {
+        if (productCate) {
+          this.listQuery.productCategoryId = productCate.id;
+          this.listQuery.productCategoryName = productCate.id;
+        } else {
+          this.listQuery.productCategoryId = null;
+          this.listQuery.productCategoryName = null;
+        }
+      },
+      getProductCateInfo(productCateInfo) {
+        this.productCateInfo = productCateInfo;
+      },
+      getproductCateName(productCategoryId) {
+        let productCategoryName = productCategoryId;
+        if (productCategoryId in this.productCateInfo) {
+          productCategoryName = this.productCateInfo[productCategoryId]['name'];
+        }
+        return productCategoryName;
+      },
       handleResetSearch() {
         this.listQuery = Object.assign({}, defaultListQuery);
       },

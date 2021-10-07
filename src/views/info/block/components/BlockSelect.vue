@@ -20,9 +20,14 @@
     export default {
         name: "BlockSelect",
         components:{},
+        props: {
+            blockSelectedId: {
+                type: Number,
+                default: null
+            }
+        },
         data() {
             return {
-                blockSelectedId: null,
                 blockSelected: null,
                 blockSelectedInfo: null,
                 listQuery: Object.assign({}, defaultListQuery),

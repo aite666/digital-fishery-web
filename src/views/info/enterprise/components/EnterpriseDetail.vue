@@ -32,11 +32,13 @@
       </el-form-item>
       <el-form-item label="年产值：" prop="annualOutputValue">
         <el-input-number v-model="enterpriseDetail.annualOutputValue"
-        :min="0" :max="100000000000000000"></el-input-number> ￥
+        :min="0" :max="100000000000000000"></el-input-number>
+        <span class="unit-span">￥</span>
       </el-form-item>
       <el-form-item label="年产量：" prop="annualYield">
         <el-input-number v-model="enterpriseDetail.annualYield"
-        :min="0" :max="100000000000000000"></el-input-number> kg
+        :min="0" :max="100000000000000000"></el-input-number>
+        <span class="unit-span">kg</span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit('enterpriseForm')">提交</el-button>
@@ -149,4 +151,7 @@
 </script>
 
 <style scoped>
+.unit-span {
+  margin-left: 10px;
+}
 </style>

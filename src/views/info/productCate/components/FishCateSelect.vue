@@ -16,9 +16,14 @@
     export default {
         name: "FishCateSelect",
         components:{},
+        props: {
+            productCateSelectedId: {
+                type: Number,
+                default: null
+            }
+        },
         data() {
             return {
-                productCateSelectedId: null,
                 productCateSelected: null,
                 productCateSelectedInfo: null,
                 productCategoryList: null,

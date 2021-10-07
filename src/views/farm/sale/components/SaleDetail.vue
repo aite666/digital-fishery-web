@@ -2,10 +2,10 @@
   <el-card class="form-container" shadow="never">
     <el-form :model="saleDetail" :rules="rules" ref="saleForm" label-width="120px">
       <el-form-item label="区块名称：" prop="blockName">
-        <el-input v-model="saleDetail.blockName"></el-input>
+        <block-select @block="getBlock" :blockSelectedId="saleDetail.blockId"></block-select>
       </el-form-item>
       <el-form-item label="养殖品种名称：" prop="productCategoryName">
-        <el-input v-model="saleDetail.productCategoryName"></el-input>
+        <fish-cate-select @fish-cate="getFishCate" :productCateSelectedId="saleDetail.productCategoryId"></fish-cate-select>
       </el-form-item>
       <el-form-item label="销售时间：" prop="saleTime">
         <el-date-picker
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+  import BlockSelect from './../../../info/block/components/BlockSelect';
+  import FishCateSelect from './../../../info/productCate/components/FishCateSelect';
   import {fetchList,createSale,updateSale,deleteSale,getSaleDetail} from '@/api/sale'
 
   const defaultSaleDetail= {
@@ -66,6 +68,7 @@
   };
   export default {
     name: "SaleDetail",
+    components:{BlockSelect,FishCateSelect},
     props: {
       isEdit: {
         type: Boolean,
@@ -110,6 +113,24 @@
     computed:{
     },
     methods: {
+      getBlock(block) {
+          if (block) {
+            this.saleDetail.blockId = block.id;
+            this.saleDetail.blockName = block.name;
+          } else {
+            this.saleDetail.blockId = null;
+            this.saleDetail.blockName = null;
+          }
+      },
+      getFishCate(fishCate) {
+        if (fishCate) {
+          this.saleDetail.productCategoryId = fishCate.id;
+          this.saleDetail.productCategoryName = fishCate.id;
+        } else {
+          this.saleDetail.productCategoryId = null;
+          this.saleDetail.productCategoryName = null;
+        }
+      },
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {

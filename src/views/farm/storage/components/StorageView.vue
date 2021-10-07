@@ -1,61 +1,37 @@
 <template>
-  <el-card class="form-container" shadow="never">
-    <el-form :model="storageDetail" :rules="rules" ref="storageForm" label-width="120px">
-      <el-form-item label="农资名称：" prop="name">
-        <el-input v-model="storageDetail.name"></el-input>
-      </el-form-item>
-      <el-form-item label="农资类型：" prop="productCategoryName">
-        <el-select v-model="storageDetail.productCategoryId">
-            <el-option
-                key="1"
-                label="化肥"
-                value="1">
-            </el-option>
-            <el-option
-                key="2"
-                label="种子"
-                value="2">
-            </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="数量单位：" prop="unit">
-          <el-select v-model="storageDetail.unit">
-            <el-option
-                key="g"
-                label="克"
-                value="g">
-            </el-option>
-            <el-option
-                key="kg"
-                label="千克"
-                value="kg">
-            </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="品牌：" prop="brand">
-        <el-input v-model="storageDetail.brand"></el-input>
-      </el-form-item>
-      <el-form-item label="备注：" prop="remark">
-        <el-input
-          :autosize="{ minRows: 4}"
-          v-model="storageDetail.remark"
-          type="textarea"
-          placeholder="请输入备注"></el-input>
-      </el-form-item>
-      <el-form-item label="最大库存预警：" prop="maxThreshold">
+  <el-card class="view-container" shadow="never">
+    <div class="left">
+      <div class="part-name">库存提醒</div>
+      <el-card shadow="always" class="part-card">
+          <div slot="header" class="clearfix">
+          <span class="card-title">{{ storageDetail.name }}</span>
+          </div>
+          <div class="card-hover">
+            <div class="card-content-item">类型：{{ storageDetail.productCategoryName }}</div>
+            <div class="card-content-item">品牌：{{ storageDetail.brand }}</div>
+            <div class="card-content-item">生产厂商：{{ storageDetail.manufacturer }}</div>
+            <div class="card-content-item">库存：{{ storageDetail.quantity }} {{ storageDetail.unit }}</div>
+          </div >
+      </el-card>
+      <p>最大库存预警: 
         <el-input-number v-model="storageDetail.maxThreshold"
-        :min="0" :max="100000000000000000"></el-input-number>
-      </el-form-item>
-      <el-form-item label="最小库存预警：" prop="minThreshold">
+          :min="0" :max="100000000000000000" disabled>
+        </el-input-number>
+        <span class="unit-span">{{storageDetail.unit}}</span>
+      </p>
+      <p>最小库存预警: 
         <el-input-number v-model="storageDetail.minThreshold"
-        :min="0" :max="100000000000000000"></el-input-number>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit('storageForm')">提交</el-button>
-        <el-button v-if="!isEdit" @click="resetForm('storageForm')">重置</el-button>
-        <el-button @click="back()">返回上一级</el-button>
-      </el-form-item>
-    </el-form>
+          :min="0" :max="100000000000000000" disabled>
+        </el-input-number>
+        <span class="unit-span">{{storageDetail.unit}}</span>
+      </p>
+    </div>
+    <div class="right">
+      <div class="part-name">使用明细</div>
+    </div>
+    <div class="view-container-button">
+      <el-button @click="back()">返回上一级</el-button>
+    </div>
   </el-card>
 </template>
 
@@ -172,4 +148,61 @@
 </script>
 
 <style scoped>
+.view-container {
+    left: 0;
+    right: 0;
+    width: 1070px;
+    padding: 35px 35px 15px 35px;
+    margin: 20px auto;
+}
+.left {
+    width: 480px;
+    height: 400px;
+    border-right: 1px solid #ebeef5;
+    float: left;
+}
+.part-name {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+.part-card {
+  margin: 20px 20px 0 0;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
+.card-title {
+  font-size: 20px;
+}
+.card-button {
+  float: right;
+  padding: 0 5px;
+  font-size: 20px;
+}
+.card-content-item {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.unit-span {
+  margin-left: 10px;
+}
+.right {
+    width: 450px;
+    padding-left: 30px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+}
+.view-container-button {
+   display:flex;
+   justify-content: center;/*水平居中*/
+   width:100%;
+   padding-top: 10px;
+}
 </style>

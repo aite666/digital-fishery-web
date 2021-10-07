@@ -1,5 +1,5 @@
 <template> 
-  <h1>视频监控</h1>
+  <el-empty description="暂无视频"></el-empty>
 </template>
 <script>
 </script>

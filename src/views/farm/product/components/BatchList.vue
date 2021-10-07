@@ -57,7 +57,7 @@
             <p style="margin-bottom: 4px;margin-top: 4px;">
                 <el-button
                     size="mini"
-                    type="danger"
+                    type="primary"
                     @click="handleFinishBatch(scope.$index, scope.row)">养殖结束
                 </el-button>
             </p>

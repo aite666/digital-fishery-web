@@ -36,13 +36,13 @@
         </div>
         <div class="content">
             <el-tabs v-model="activeName">
-                <el-tab-pane label="库存" name="first">
-                    <storage-list></storage-list>
+                <el-tab-pane label="库存" name="first" :lazy="lazyFlag">
+                    <storage-list ref="storageList"></storage-list>
                 </el-tab-pane>
-                <el-tab-pane label="入库记录" name="second">
-                    <storage-record-list></storage-record-list>
+                <el-tab-pane label="入库记录" name="second" :lazy="lazyFlag">
+                    <storage-record-list @confirm="confirmRecord()"></storage-record-list>
                 </el-tab-pane>
-                <el-tab-pane label="出库记录" name="third">
+                <el-tab-pane label="出库记录" name="third" :lazy="lazyFlag">
                     <storage-record-list></storage-record-list>
                 </el-tab-pane>
             </el-tabs>
@@ -60,7 +60,8 @@
     data() {
       return {
         activeName: 'first',
-        blockSelected: '',
+        blockSelected: null,
+        lazyFlag: true,
       }
     },
     created() {
@@ -68,6 +69,11 @@
     computed:{
     },
     methods: {
+        confirmRecord() {
+            console.log('confirmRecord');
+            let childStorageList = this.$refs.storageList;
+            childStorageList.getList();
+        }
     }
   }
 </script>
@@ -89,8 +95,6 @@
   margin: 0 30px 0 24px;
 }
 .d-f {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;

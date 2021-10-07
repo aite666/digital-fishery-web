@@ -7,6 +7,14 @@ export function fetchList(params) {
   })
 }
 
+export function fetchStorageList(params) {
+  return request({
+    url:'/storage/list',
+    method:'get',
+    params:params
+  })
+}
+
 export function createStorage(data) {
   return request({
     url:'/storage/create',

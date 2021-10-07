@@ -5,30 +5,17 @@
         <el-input v-model="storageDetail.name"></el-input>
       </el-form-item>
       <el-form-item label="农资类型：" prop="productCategoryId">
-        <el-select v-model="storageDetail.productCategoryId">
-            <el-option
-                key="1"
-                label="化肥"
-                value="1">
-            </el-option>
-            <el-option
-                key="2"
-                label="种子"
-                value="2">
-            </el-option>
-        </el-select>
+        <product-cate-select @product-cate="getProductCate"
+        @product-cate-info="getProductCateInfo"
+        :selectedId="storageDetail.productCategoryId"></product-cate-select>
       </el-form-item>
       <el-form-item label="数量单位：" prop="unit">
           <el-select v-model="storageDetail.unit">
             <el-option
-                key="g"
-                label="克"
-                value="g">
-            </el-option>
-            <el-option
-                key="kg"
-                label="千克"
-                value="kg">
+              v-for="item in unitOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
             </el-option>
         </el-select>
       </el-form-item>
@@ -47,11 +34,15 @@
       </el-form-item>
       <el-form-item label="最大库存预警：" prop="maxThreshold">
         <el-input-number v-model="storageDetail.maxThreshold"
-        :min="0" :max="100000000000000000"></el-input-number>
+        :min="0" :max="100000000000000000">
+        </el-input-number> 
+        <span class="unit-span">{{storageDetail.unit}}</span>
       </el-form-item>
       <el-form-item label="最小库存预警：" prop="minThreshold">
         <el-input-number v-model="storageDetail.minThreshold"
-        :min="0" :max="100000000000000000"></el-input-number>
+        :min="0" :max="100000000000000000">
+        </el-input-number>
+        <span class="unit-span">{{storageDetail.unit}}</span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit('storageForm')">提交</el-button>
@@ -63,6 +54,7 @@
 </template>
 
 <script>
+  import ProductCateSelect from './../../../info/productCate/components/ProductCateSelect';
   import {fetchList,createStorage,updateStorage,deleteStorage,getStorageDetail} from '@/api/storage'
 
   const defaultStorageDetail= {
@@ -70,7 +62,7 @@
     name: '',
     productCategoryId: 0,
     productCategoryName: '',
-    unit: '',
+    unit: '克',
     brand: '',
     manufacturer: '',
     remark: '',
@@ -80,6 +72,7 @@
   };
   export default {
     name: "StorageDetail",
+    components:{ProductCateSelect},
     props: {
       isEdit: {
         type: Boolean,
@@ -89,6 +82,19 @@
     data() {
       return {
         storageDetail: Object.assign({}, defaultStorageDetail),
+        unitOptions: [
+          {value: '克', label: '克'},
+          {value: '千克', label: '千克'},
+          {value: '斤', label: '斤'},
+          {value: '公斤', label: '公斤'},
+          {value: '吨', label: '吨'},
+          {value: '毫升', label: '毫升'},
+          {value: '升', label: '升'},
+          {value: '平方米', label: '平方米'},
+          {value: '个', label: '个'},
+          {value: '条', label: '条'},
+        ],
+        productCateInfo: {},
         rules: {
           name: [
             {required: true, message: '请输入农资名称', trigger: 'blur'},
@@ -124,6 +130,18 @@
     computed:{
     },
     methods: {
+      getProductCate(productCate) {
+        if (productCate) {
+          this.storageDetail.productCategoryId = productCate.id;
+          this.storageDetail.productCategoryName = productCate.id;
+        } else {
+          this.storageDetail.productCategoryId = null;
+          this.storageDetail.productCategoryName = null;
+        }
+      },
+      getProductCateInfo(productCateInfo) {
+        this.productCateInfo = productCateInfo;
+      },
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -175,4 +193,7 @@
 </script>
 
 <style scoped>
+.unit-span {
+  margin-left: 10px;
+}
 </style>

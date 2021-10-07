@@ -36,3 +36,10 @@ export function getStorageRecordDetail(id) {
     method:'get'
   });
 }
+
+export function confirmStorageRecord(id) {
+  return request({
+    url:'/storageRecord/confirm/' + id,
+    method:'post',
+  })
+}
