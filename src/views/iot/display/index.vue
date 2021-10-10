@@ -4,25 +4,7 @@
             <div class="left d-f">
               <div class="wapper">
                 <div class="top">
-                  <el-select class="select-block" 
-                    v-model="blockSelected"
-                    placeholder="请选择区块">
-                    <el-option
-                      key="all"
-                      label="全部区域"
-                      value="all">
-                    </el-option>
-                    <el-option
-                      key="1"
-                      label="区域1"
-                      value="1">
-                    </el-option>
-                    <el-option
-                      key="2"
-                      label="区域2"
-                      value="2">
-                    </el-option>
-                  </el-select>
+                  <block-select class="select-block " @block="getBlock"></block-select>
                 </div>
               </div>
             </div>
@@ -98,13 +80,18 @@
 </template>
 
 <script>
+  import BlockSelect from './../../info/block/components/BlockSelect';
+
+  const defaultListQuery = {
+    pageNum: 1,
+    pageSize: 10,
+    name: null,
+    blockId: null,
+  };
   export default {
-    name: "product",
+    name: "display",
+    components:{BlockSelect},
     props: {
-      isEdit: {
-        type: Boolean,
-        default: false
-      }
     },
     data() {
       return {
@@ -135,6 +122,13 @@
     computed:{
     },
     methods: {
+      getBlock(block) {
+          if (block) {
+            this.listQuery.blockId = block.id;
+          } else {
+            this.listQuery.blockId = null;
+          }
+      },
       handleViewData() {
 
       }

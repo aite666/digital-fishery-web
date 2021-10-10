@@ -59,7 +59,9 @@
           <template slot-scope="scope">{{scope.row.characterDescription}}</template>
         </el-table-column>
         <el-table-column label="图片" align="center">
-          <template slot-scope="scope">{{scope.row.images}}</template>
+          <template slot-scope="scope">
+            <img style="height: 80px" :src="getImage(scope.row.images)">
+          </template>
         </el-table-column>
         <el-table-column label="区试人员" align="center">
           <template slot-scope="scope">{{scope.row.createUser}}</template>
@@ -103,6 +105,7 @@
     pageNum: 1,
     pageSize: 10,
     name: null,
+    blockId: null,
   };
   export default {
     name: "inspectionList",
@@ -125,6 +128,13 @@
       },
     },
     methods: {
+      getImage(images) {
+        let image =' ';
+        if (images) {
+          image = images.split(',')[0];
+        }
+        return image;
+      },
       handleResetSearch() {
         this.listQuery = Object.assign({}, defaultListQuery);
       },

@@ -51,7 +51,7 @@
 <script>
   import BlockSelect from './../../../info/block/components/BlockSelect';
   import FishCateSelect from './../../../info/productCate/components/FishCateSelect';
-  import {fetchList,createSale,updateSale,deleteSale,getSaleDetail} from '@/api/sale'
+  import {fetchList,createSale,updateSale,deleteSale,getSaleDetail} from '@/api/sale';
 
   const defaultSaleDetail= {
     blockId: 0,

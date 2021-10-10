@@ -32,6 +32,11 @@
         <el-table-column label="级别" width="100" align="center">
           <template slot-scope="scope">{{scope.row.level | levelFilter}}</template>
         </el-table-column>
+        <el-table-column label="图片" width="100" align="center">
+          <template slot-scope="scope">
+            <img style="height: 80px;width: 80px" :src="scope.row.image">
+          </template>
+        </el-table-column>
         <el-table-column label="排序" width="100" align="center">
           <template slot-scope="scope">{{scope.row.sort }}</template>
         </el-table-column>

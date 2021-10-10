@@ -1,5 +1,5 @@
 <template>
-    <el-select v-model="productCateSelectedId"
+    <el-select v-model="productCateId"
         clearable
         @change="sendProductCate()">
         <el-option v-for="item of productCategoryList" 
@@ -25,11 +25,13 @@
         data() {
             return {
                 productCateSelected: null,
+                productCateId: null,
                 productCateSelectedInfo: null,
                 productCategoryList: null,
             }
         },
         created() {
+            this.productCateId = this.productCateSelectedId;
             this.getList();
         },
         methods: {
@@ -66,7 +68,7 @@
                 });
             },
             sendProductCate() { //1.子组件通过子定义事件的方式将productCate信息传给父组件
-                this.productCateSelected = this.productCateSelectedInfo[this.productCateSelectedId.toString()];
+                this.productCateSelected = this.productCateSelectedInfo[this.productCateId.toString()];
                 this.$emit('fish-cate', this.productCateSelected);
             }
         }

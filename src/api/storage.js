@@ -44,3 +44,11 @@ export function getStorageDetail(id) {
     method:'get'
   });
 }
+
+export function getStorageStats() {
+  return request({
+    url:'/storage/stats',
+    method:'get'
+  });
+}
+

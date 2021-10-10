@@ -22,8 +22,7 @@
         <el-input v-model="productCate.sort"></el-input>
       </el-form-item>
       <el-form-item label="农资种类图片：">
-        <!-- <single-upload v-model="productCate.icon"></single-upload> -->
-        <el-input v-model="productCate.image"></el-input>
+        <single-upload v-model="productCate.image"></single-upload>
       </el-form-item>
       <el-form-item label="农资种类描述：">
         <el-input type="textarea" :autosize="true" v-model="productCate.description"></el-input>

@@ -5,7 +5,7 @@
         <el-input v-model="adviceDetail.name"></el-input>
       </el-form-item>
       <el-form-item label="区块名称：" prop="blockName">
-        <block-select @block="getBlock"></block-select>
+        <block-select @block="getBlock" :blockSelectedId="adviceDetail.blockId"></block-select>
       </el-form-item>
       <el-form-item label="养殖种类名称：" prop="productCategoryName">
         <fish-cate-select @fish-cate="getFishCate"></fish-cate-select>

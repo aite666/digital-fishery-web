@@ -169,6 +169,13 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'addStorageUse',
+        name: 'addStorageUse',
+        component: () => import('@/views/farm/storageRecord/addStorageUse'),
+        meta: {title: '新增农资使用记录'},
+        hidden: true
+      },
+      {
         path: 'sale',
         name: 'sale',
         component: () => import('@/views/farm/sale/index'),

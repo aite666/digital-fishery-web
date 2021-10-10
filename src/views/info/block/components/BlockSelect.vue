@@ -1,5 +1,5 @@
 <template>
-    <el-select v-model="blockSelectedId"
+    <el-select v-model="blockId"
         clearable
         @change="sendBlock()">
         <el-option v-for="item of list" 
@@ -29,6 +29,7 @@
         data() {
             return {
                 blockSelected: null,
+                blockId: null,
                 blockSelectedInfo: null,
                 listQuery: Object.assign({}, defaultListQuery),
                 listLoading: true,
@@ -37,6 +38,7 @@
             }
         },
         created() {
+            this.blockId = this.blockSelectedId;
             this.getList();
         },
         methods: {
@@ -70,7 +72,7 @@
                 });
             },
             sendBlock() { //1.子组件通过子定义事件的方式将block信息传给父组件
-                this.blockSelected = this.blockSelectedInfo[this.blockSelectedId.toString()];
+                this.blockSelected = this.blockSelectedInfo[this.blockId.toString()];
                 this.$emit('block', this.blockSelected);
             }
         }

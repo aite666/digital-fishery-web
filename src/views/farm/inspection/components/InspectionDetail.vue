@@ -2,7 +2,7 @@
   <el-card class="form-container" shadow="never">
     <el-form :model="inspectionDetail" :rules="rules" ref="inspectionForm" label-width="120px">
       <el-form-item label="区域名称：" prop="name">
-        <block-select @block="getBlock"></block-select>
+        <block-select @block="getBlock" :blockSelectedId="inspectionDetail.blockId"></block-select>
       </el-form-item>
       <el-form-item label="区试时间：">
         <el-date-picker
@@ -37,7 +37,8 @@
           placeholder="请输入品种性状描述"></el-input>
       </el-form-item>
       <el-form-item label="图片：" prop="images">
-        <el-input v-model="inspectionDetail.images"></el-input>
+        <!-- <el-input v-model="inspectionDetail.images"></el-input> -->
+        <multi-upload v-model="selectPics"></multi-upload>
       </el-form-item>
       <el-form-item label="区试人员：" prop="createUser">
         <el-input v-model="inspectionDetail.createUser"></el-input>
@@ -53,6 +54,7 @@
 
 <script>
   import BlockSelect from './../../../info/block/components/BlockSelect';
+  import MultiUpload from '@/components/Upload/multiUpload';
   import {fetchList,createInspection,updateInspection,deleteInspection,getInspectionDetail} from '@/api/inspection'
 
   const defaultInspectionDetail= {
@@ -67,7 +69,7 @@
   };
   export default {
     name: "InspectionDetail",
-    components:{BlockSelect},
+    components:{BlockSelect,MultiUpload},
     props: {
       isEdit: {
         type: Boolean,
@@ -109,6 +111,34 @@
       }
     },
     computed:{
+      selectPics:{
+        get:function () {
+          let pics = [];
+          if(this.inspectionDetail.images===undefined||this.inspectionDetail.images==null||this.inspectionDetail.images===''){
+            return pics;
+          }
+          let imageList = this.inspectionDetail.images.split(',');
+          for(let i=0;i<imageList.length;i++){
+            pics.push(imageList[i]);
+          }
+          return pics;
+        },
+        set:function (newValue) {
+          if (newValue == null || newValue.length === 0) {
+            this.inspectionDetail.images = null;
+          } else {
+            this.inspectionDetail.images = '';
+            if (newValue.length > 1) {
+              for (let i = 0; i < newValue.length; i++) {
+                this.inspectionDetail.images += newValue[i];
+                if (i !== newValue.length - 1) {
+                  this.inspectionDetail.images += ',';
+                }
+              }
+            }
+          }
+        }
+      }
     },
     methods: {
       getBlock(block) {

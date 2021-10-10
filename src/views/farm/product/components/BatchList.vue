@@ -7,6 +7,13 @@
         >
         查询搜索
     </el-button>
+    <el-button
+        type="primary"
+        style="float:right;"
+        @click="handleUseStorage()"
+        >
+        使用农资
+    </el-button>
     <div class="table-container">
       <el-table ref="batchTable"
                 :data="list"
@@ -39,9 +46,18 @@
           <template slot-scope="scope">{{scope.row.amount}}</template>
         </el-table-column>
         <el-table-column label="养殖状态" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.status}}</template>
+          <template slot-scope="scope">
+            <div class="scope-item" v-if="scope.row.status == 1">
+              <span class="color-dot" style="background: rgb(21, 185, 192);"></span>
+              <span>养殖中</span>
+            </div>
+            <div class="scope-item" v-if="scope.row.status == 0">
+              <span class="color-dot" style="background: rgb(153, 153, 153);"></span>
+              <span>养殖完毕</span>
+            </div>
+          </template>
         </el-table-column>
-        <el-table-column label="操作" width="160" align="center">
+        <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
             <p style="margin-bottom: 4px;margin-top: 4px;">
               <el-button
@@ -54,10 +70,15 @@
                 @click="handleDeleteBatch(scope.$index, scope.row)">删除
               </el-button>
             </p>
-            <p style="margin-bottom: 4px;margin-top: 4px;">
+            <p style="margin-bottom: 4px;margin-top: 4px;" v-if="scope.row.status == 1">
                 <el-button
                     size="mini"
                     type="primary"
+                    @click="handleOutBatch(scope.$index, scope.row)">出塘
+                </el-button>
+                <el-button
+                    size="mini"
+                    type="danger"
                     @click="handleFinishBatch(scope.$index, scope.row)">养殖结束
                 </el-button>
             </p>
@@ -77,10 +98,19 @@
         :total="total">
       </el-pagination>
     </div>
+    <el-dialog
+      :title="'添加出塘记录'"
+      :visible.sync="dialogVisible"
+      width="40%">
+        <batch-out-detail :is-edit='false' :batchDetail='batchDetail'
+          @cancel="cancel" @commitSuccess="commitSuccess">
+        </batch-out-detail>
+    </el-dialog>
 </div>
 </template>
 <script>
-  import {fetchList, deleteBatch} from '@/api/batch';
+  import BatchOutDetail from './BatchOutDetail';
+  import {fetchList, deleteBatch, updateBatch} from '@/api/batch';
   import {formatDate} from '@/utils/date';
   const defaultListQuery = {
     pageNum: 1,
@@ -90,7 +120,7 @@
   };
   export default {
     name: "BatchList",
-    components:{},
+    components:{BatchOutDetail},
     props: {
         blockId: {
           type: Number,
@@ -103,6 +133,8 @@
         listLoading: true,
         list: null,
         total: null,
+        dialogVisible: false,
+        batchDetail: null,
       }
     },
     created() {
@@ -152,6 +184,10 @@
       handleUpdateBatch(index, row) {
           this.$emit('update-batch', index, row);
       },
+      handleOutBatch(index, row) {
+          this.dialogVisible = true;
+          this.batchDetail = row;
+      },
       handleDeleteBatch(index, row) {
         this.$confirm('是否要进行删除操作?', '提示', {
           confirmButtonText: '确定',
@@ -168,11 +204,46 @@
           });
         });
       },
+      handleFinishBatch(index, row) {
+        this.$confirm('是否要进行养殖结束操作?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          row.status = 0;
+          updateBatch(row.id, row).then(response => {
+            this.$message({
+              message: '养殖结束成功',
+              type: 'success',
+              duration: 1000
+            });
+            this.getList();
+          });
+        });
+      },
+      cancel() {
+        this.dialogVisible = false;
+      },
+      commitSuccess() {
+        this.dialogVisible = false;
+        this.$emit('getAllList');
+      },
+      handleUseStorage() {
+        this.$router.push({path:'/farm/addStorageUse'});
+      }
     }
   }
 </script>
 <style scoped>
   .input-width {
     width: 203px;
+  }
+  .color-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 8px;
+    margin-right: 6px;
   }
 </style>
