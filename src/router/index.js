@@ -21,6 +21,22 @@ import Layout from '../views/layout/Layout'
 export const constantRouterMap = [
   {path: '/login', component: () => import('@/views/login/index'), hidden: true},
   {path: '/404', component: () => import('@/views/404'), hidden: true},
+  {path: '/opening/promotion', 
+    component: () => import('@/views/opening/promotion/index'),
+    hidden: true,
+  },
+  {path: '/opening/giftedFish', 
+    component: () => import('@/views/bigscreen/giftedFish/index'),
+    hidden: true,
+  },
+  {path: '/opening/map', 
+    component: () => import('@/views/bigscreen/map/index'),
+    hidden: true,
+  },
+  {path: '/opening/riceTurtl', 
+    component: () => import('@/views/bigscreen/riceTurtl/index'),
+    hidden: true,
+  },
   {
     path: '',
     component: Layout,
@@ -255,20 +271,20 @@ export const asyncRouterMap = [
         path: 'qrCode',
         name: 'qrCode',
         component: () => import('@/views/info/qrCode/index'),
-        meta: {title: '二维码管理', icon: 'product-list'}
+        meta: {title: '推广追溯管理', icon: 'product-list'}
       },
       {
         path: 'addQrCode',
         name: 'addQrCode',
         component: () => import('@/views/info/qrCode/add'),
-        meta: {title: '新增二维码'},
+        meta: {title: '新增推广追溯'},
         hidden: true
       },
       {
         path: 'updateQrCode',
         name: 'updateQrCode',
         component: () => import('@/views/info/qrCode/update'),
-        meta: {title: '编辑二维码'},
+        meta: {title: '编辑推广追溯'},
         hidden: true
       },
       {

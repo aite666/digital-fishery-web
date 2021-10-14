@@ -136,7 +136,7 @@
         this.getList();
       },
       handleAddEnterprise() {
-        this.$router.push({path:'/info/addEnterprise'});
+        this.$router.push({path:'/info/addEnterprisesss'});
       },
       handleSelectionChange(val){
         this.multipleSelection = val;

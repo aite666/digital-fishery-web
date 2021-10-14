@@ -6,6 +6,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 import VCharts from 'v-charts'
+import BaiduMap from 'vue-baidu-map'
 
 import '@/styles/index.scss' // global css
 
@@ -22,6 +23,7 @@ Vue.prototype.$utils = utils
 
 Vue.use(ElementUI, { locale })
 Vue.use(VCharts)
+Vue.use(BaiduMap, { ak: 'kex74bEK5m4qBpUDM3TlaXAUGPHFidHp'})
 
 Vue.config.productionTip = false
 
