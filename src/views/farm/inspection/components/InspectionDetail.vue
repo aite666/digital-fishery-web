@@ -1,6 +1,6 @@
 <template>
   <el-card class="form-container" shadow="never">
-    <el-form :model="inspectionDetail" :rules="rules" ref="inspectionForm" label-width="120px">
+    <el-form :model="inspectionDetail" :rules="rules" ref="inspectionForm" label-width="150px">
       <el-form-item label="区域名称：" prop="name">
         <block-select @block="getBlock" :blockSelectedId="inspectionDetail.blockId"></block-select>
       </el-form-item>

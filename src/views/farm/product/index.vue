@@ -108,13 +108,24 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="数量：">
+        <el-form-item label="数量：" class="form-width">
           <el-input-number
             v-model="batch.quantity"
             class="form-width"
             :min="0"
             :max="100000000000000000"
           ></el-input-number>
+        </el-form-item>
+        <el-form-item label="单位：">
+          <el-select v-model="batch.unit" class="form-width">
+            <el-option
+              v-for="item in unitOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="单价：">
           <el-input-number
@@ -201,6 +212,10 @@ export default {
       productCategoryNum: 0,
       batchNum: 0,
       outRecordNum: 0,
+      unitOptions: [
+        { value: "公斤", label: "公斤" },
+        { value: "尾", label: "尾" },
+      ],
     };
   },
   created() {

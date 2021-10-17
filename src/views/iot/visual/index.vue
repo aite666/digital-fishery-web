@@ -16,7 +16,7 @@ export default {
   mounted() {
     this.map = this.$utils.map.createMap("map-container");
     // 设施地图视图 中心位置
-    this.map.setView([39.924317, 115.890619	], 11, {preferCanvas: true});
+    this.map.setView([30.381, 119.43	], 11, {preferCanvas: true});
 
     // 加载 open street map和mapbox 图层服务
    this.$utils.map.createTileLayer(this.map, this.OSMUrl, {

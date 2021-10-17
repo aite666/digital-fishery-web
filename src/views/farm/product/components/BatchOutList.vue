@@ -21,24 +21,27 @@
           width="60"
           align="center"
         ></el-table-column>
-        <el-table-column label="批次号" width="160" align="center">
+        <!-- <el-table-column label="批次号" width="160" align="center">
           <template slot-scope="scope">{{ scope.row.batchCode }}</template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="所在区块" align="center">
           <template slot-scope="scope">{{ scope.row.blockName }}</template>
         </el-table-column>
-        <el-table-column label="养殖品种" width="120" align="center">
+        <el-table-column label="养殖品种" align="center">
           <template slot-scope="scope">{{
             scope.row.productCategoryName
           }}</template>
         </el-table-column>
-        <el-table-column label="出塘日期" width="120" align="center">
+        <el-table-column label="出塘日期" align="center">
           <template slot-scope="scope">{{
             scope.row.outTime | formatOutTime
           }}</template>
         </el-table-column>
-        <el-table-column label="数量" width="120" align="center">
-          <template slot-scope="scope">{{ scope.row.quantity }}</template>
+        <el-table-column label="出塘类型" align="center">
+          <template slot-scope="scope">{{ scope.row.outType | formatOutType }}</template>
+        </el-table-column>
+        <el-table-column label="数量" align="center">
+          <template slot-scope="scope">{{ scope.row.quantity + scope.row.unit }}</template>
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
@@ -130,6 +133,10 @@ export default {
       let date = new Date(time);
       return formatDate(date, "yyyy-MM-dd");
     },
+    formatOutType(outType) {
+      let outTypeList = ['直接销售', '赠送', '扔掉', '其他'];
+      return outTypeList[outType - 1];
+    }
   },
   methods: {
     handleResetSearch() {

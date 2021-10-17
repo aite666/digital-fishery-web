@@ -62,7 +62,7 @@
           <template slot-scope="scope">{{scope.row.customerPhone}}</template>
         </el-table-column>
         <el-table-column label="数量" align="center">
-          <template slot-scope="scope">{{scope.row.quantity}}</template>
+          <template slot-scope="scope">{{scope.row.quantity + scope.row.unit}}</template>
         </el-table-column>
         <el-table-column label="单价" align="center">
           <template slot-scope="scope">{{scope.row.unitPrice}}</template>

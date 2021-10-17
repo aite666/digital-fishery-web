@@ -50,7 +50,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200" align="center">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="scope.row.name != '养殖鱼类'">
             <el-button
               size="mini"
               @click="handleUpdate(scope.$index, scope.row)">编辑

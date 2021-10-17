@@ -5,28 +5,28 @@
     ref="batchOutForm"
     label-width="120px"
   >
-    <el-form-item label="批次号：" prop="blockName">
+    <!-- <el-form-item label="批次号：" prop="blockName">
       <el-input
         v-model="batchOutDetail.batchCode"
         disabled
         class="input-width"
       ></el-input>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="区块名称：" prop="blockName">
-      <el-input
-        v-model="batchOutDetail.blockName"
-        disabled
+      <block-select
+        @block="getBlock"
         class="input-width"
-      ></el-input>
+        :blockSelectedId="batchOutDetail.blockId"
+      ></block-select>
     </el-form-item>
     <el-form-item label="养殖品种名称：" prop="productCategoryName">
-      <el-input
-        v-model="batchOutDetail.productCategoryName"
-        disabled
+      <fish-cate-select
+        @fish-cate="getFishCate"
         class="input-width"
-      ></el-input>
+        :productCateSelectedId="batchOutDetail.productCategoryId"
+      ></fish-cate-select>
     </el-form-item>
-    <el-form-item label="销售时间：" prop="outTime">
+    <el-form-item label="出塘时间：" prop="outTime">
       <el-date-picker
         class="input-width"
         v-model="batchOutDetail.outTime"
@@ -41,9 +41,64 @@
     <el-form-item label="数量：" prop="quantity">
       <el-input-number
         v-model="batchOutDetail.quantity"
+        class="input-width"
         :min="0"
         :max="100000000000000000"
       ></el-input-number>
+    </el-form-item>
+    <el-form-item label="单位：">
+      <el-select v-model="batchOutDetail.unit" class="input-width">
+        <el-option
+          v-for="item in unitOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="出塘类型：">
+      <el-select v-model="batchOutDetail.outType" class="input-width">
+        <el-option
+          v-for="item in outTypeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="单价：" class="input-width">
+      <el-input-number
+        v-model="saleDetail.unitPrice"
+        v-if="batchOutDetail.outType == 1"
+        :min="0"
+        :max="100000000000000000"
+      ></el-input-number>
+    </el-form-item>
+    <el-form-item
+      v-if="batchOutDetail.outType == 1"
+      label="目的地："
+      prop="destination"
+    >
+      <el-input v-model="saleDetail.destination" class="input-width"></el-input>
+    </el-form-item>
+    <el-form-item
+      v-if="batchOutDetail.outType == 1"
+      label="客户名称："
+      prop="customer"
+    >
+      <el-input v-model="saleDetail.customer" class="input-width"></el-input>
+    </el-form-item>
+    <el-form-item
+      v-if="batchOutDetail.outType == 1"
+      label="客户电话："
+      prop="customerPhone"
+    >
+      <el-input
+        v-model="saleDetail.customerPhone"
+        class="input-width"
+      ></el-input>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit('batchOutForm')"
@@ -60,6 +115,7 @@
 <script>
 import BlockSelect from "./../../../info/block/components/BlockSelect";
 import FishCateSelect from "./../../../info/productCate/components/FishCateSelect";
+import { createSale } from "@/api/sale";
 import {
   fetchList,
   createBatchOut,
@@ -69,14 +125,29 @@ import {
 } from "@/api/batchOut";
 
 const defaultBatchOutDetail = {
-  batchId: 0,
-  batchCode: "",
+  batchId: null,
+  batchCode: null,
+  blockId: null,
+  blockName: null,
+  productCategoryId: null,
+  productCategoryName: null,
+  outTime: null,
+  quantity: null,
+  unit: null,
+  outType: null,
+};
+const defaultSaleDetail = {
   blockId: 0,
   blockName: "",
   productCategoryId: 0,
   productCategoryName: "",
-  outTime: "",
+  saleTime: "",
+  destination: "",
+  customer: "",
+  customerPhone: "",
   quantity: "",
+  unitPrice: "",
+  amount: "",
 };
 export default {
   name: "BatchOutDetail",
@@ -98,6 +169,7 @@ export default {
   data() {
     return {
       batchOutDetail: Object.assign({}, defaultBatchOutDetail),
+      saleDetail: Object.assign({}, defaultSaleDetail),
       rules: {},
       pickerOptions: {
         shortcuts: [
@@ -117,6 +189,16 @@ export default {
           },
         ],
       },
+      unitOptions: [
+        { value: "公斤", label: "公斤" },
+        { value: "尾", label: "尾" },
+      ],
+      outTypeOptions: [
+        { value: 1, label: "直接销售" },
+        { value: 2, label: "赠送" },
+        { value: 3, label: "扔掉" },
+        { value: 4, label: "其他" },
+      ],
     };
   },
   created() {
@@ -125,17 +207,35 @@ export default {
     } else {
       this.batchOutDetail = Object.assign({}, defaultBatchOutDetail);
       if (this.batchDetail) {
-        this.batchOutDetail.batchId = this.batchDetail.id;
-        this.batchOutDetail.batchCode = this.batchDetail.code;
+        // this.batchOutDetail.batchId = this.batchDetail.id;
+        // this.batchOutDetail.batchCode = this.batchDetail.code;
         this.batchOutDetail.blockId = this.batchDetail.blockId;
-        this.batchOutDetail.blockName = this.batchDetail.blockName;
-        this.batchOutDetail.productCategoryId = this.batchDetail.productCategoryId;
-        this.batchOutDetail.productCategoryName = this.batchDetail.productCategoryName;
+        // this.batchOutDetail.blockName = this.batchDetail.blockName;
+        // this.batchOutDetail.productCategoryId = this.batchDetail.productCategoryId;
+        // this.batchOutDetail.productCategoryName = this.batchDetail.productCategoryName;
       }
     }
   },
   computed: {},
   methods: {
+    getBlock(block) {
+      if (block) {
+        this.batchOutDetail.blockId = block.id;
+        this.batchOutDetail.blockName = block.name;
+      } else {
+        this.batchOutDetail.blockId = null;
+        this.batchOutDetail.blockName = null;
+      }
+    },
+    getFishCate(fishCate) {
+      if (fishCate) {
+        this.batchOutDetail.productCategoryId = fishCate.id;
+        this.batchOutDetail.productCategoryName = fishCate.id;
+      } else {
+        this.batchOutDetail.productCategoryId = null;
+        this.batchOutDetail.productCategoryName = null;
+      }
+    },
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -156,6 +256,18 @@ export default {
                 }
               );
             } else {
+              if (this.batchOutDetail.outType == 1) {
+                this.saleDetail.blockId = this.batchOutDetail.blockId;
+                this.saleDetail.blockName = this.batchOutDetail.blockName;
+                this.saleDetail.productCategoryId = this.batchOutDetail.productCategoryId;
+                this.saleDetail.productCategoryName = this.batchOutDetail.productCategoryName;
+                this.saleDetail.saleTime = this.batchOutDetail.outTime;
+                this.saleDetail.quantity = this.batchOutDetail.quantity;
+                this.saleDetail.unit = this.batchOutDetail.unit;
+                this.saleDetail.amount =
+                  this.saleDetail.quantity * this.saleDetail.unitPrice;
+                createSale(this.saleDetail).then((response) => {});
+              }
               createBatchOut(this.batchOutDetail).then((response) => {
                 this.$refs[formName].resetFields();
                 this.resetForm(formName);

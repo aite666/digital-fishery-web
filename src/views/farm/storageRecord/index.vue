@@ -68,14 +68,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="使用养殖鱼类" align="center" v-if="isDetail">
+        <!-- <el-table-column label="使用养殖鱼类" align="center" v-if="isDetail">
           <template slot-scope="scope">
             <div class="scope-item" v-if="scope.row.type == 1">--</div>
             <div class="scope-item" v-if="scope.row.type == 2">
               {{ scope.row.productCategoryName }}
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="生产厂商" align="center" v-if="!isDetail">
           <template slot-scope="scope">{{
             scope.row.storageManufacturer

@@ -12,13 +12,13 @@
           :blockSelectedId="storageUseDetail.blockId"
         ></block-select>
       </el-form-item>
-      <el-form-item label="养殖品种名称：" prop="productCategoryName">
+      <!-- <el-form-item label="养殖品种名称：" prop="productCategoryName">
         <fish-cate-select
           @fish-cate="getFishCate"
           :productCateSelectedId="storageUseDetail.productCategoryId"
         >
         </fish-cate-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="农资类型：" prop="productCategoryId">
         <product-cate-select
           @product-cate="getProductCate"

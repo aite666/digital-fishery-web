@@ -48,6 +48,9 @@
                     let productCateSelectedInfo = {};
                     let parentIdInfo = {};
                     for (let i = 0; i < list.length; i++) {
+                        if (list[i]['name'] == '养殖鱼类') {
+                            continue;
+                        }
                         let children = [];
                         parentIdInfo[list[i].id.toString()] = [list[i].id]
                         if (list[i].children != null && list[i].children.length > 0) {

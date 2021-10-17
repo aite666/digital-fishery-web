@@ -10,6 +10,11 @@
     <el-button
         type="primary"
         style="float:right;"
+        @click="handleOutBatch()">出塘
+    </el-button>
+    <el-button
+        type="primary"
+        style="float:right;"
         @click="handleUseStorage()"
         >
         使用农资
@@ -37,7 +42,7 @@
           <template slot-scope="scope">{{scope.row.origin}}</template>
         </el-table-column>
         <el-table-column label="数量" width="120" align="center">
-          <template slot-scope="scope">{{scope.row.quantity}}</template>
+          <template slot-scope="scope">{{scope.row.quantity + scope.row.unit}}</template>
         </el-table-column>
         <el-table-column label="单价" width="120" align="center">
           <template slot-scope="scope">{{scope.row.unitPrice}}</template>
@@ -71,11 +76,6 @@
               </el-button>
             </p>
             <p style="margin-bottom: 4px;margin-top: 4px;" v-if="scope.row.status == 1">
-                <el-button
-                    size="mini"
-                    type="primary"
-                    @click="handleOutBatch(scope.$index, scope.row)">出塘
-                </el-button>
                 <el-button
                     size="mini"
                     type="danger"
@@ -184,9 +184,11 @@
       handleUpdateBatch(index, row) {
           this.$emit('update-batch', index, row);
       },
-      handleOutBatch(index, row) {
+      handleOutBatch() {
+        if (this.blockId) {
+            this.batchDetail = {'blockId': this.blockId};
+          }
           this.dialogVisible = true;
-          this.batchDetail = row;
       },
       handleDeleteBatch(index, row) {
         this.$confirm('是否要进行删除操作?', '提示', {

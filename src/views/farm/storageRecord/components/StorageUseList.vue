@@ -20,24 +20,24 @@
           width="60"
           align="center"
         ></el-table-column>
-        <el-table-column label="农资名称" width="160" align="center">
+        <el-table-column label="农资名称" align="center">
           <template slot-scope="scope">{{ scope.row.storageName }}</template>
         </el-table-column>
-        <el-table-column label="区块名称" width="160" align="center">
+        <el-table-column label="区块名称" align="center">
           <template slot-scope="scope">{{ scope.row.blockName }}</template>
         </el-table-column>
-        <el-table-column label="农资类型" align="center">
+        <!-- <el-table-column label="农资类型" align="center">
           <template slot-scope="scope">{{
             scope.row.productCategoryName
           }}</template>
-        </el-table-column>
-        <el-table-column label="使用日期" width="120" align="center">
+        </el-table-column> -->
+        <el-table-column label="使用日期" align="center">
           <template slot-scope="scope">{{
             scope.row.recordTime | formatRecordTime
           }}</template>
         </el-table-column>
-        <el-table-column label="使用数量" width="120" align="center">
-          <template slot-scope="scope">{{ scope.row.quantity }}</template>
+        <el-table-column label="使用数量" align="center">
+          <template slot-scope="scope">{{ scope.row.quantity + scope.row.storageUnit }}</template>
         </el-table-column>
         <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
