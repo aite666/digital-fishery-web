@@ -62,13 +62,13 @@ export const asyncRouterMap = [
         path: 'visual',
         name: 'visual',
         component: () => import('@/views/iot/visual/index'),
-        meta: {title: '可视化控制', icon: 'product-list'}
+        meta: {title: '可视化控制', icon: 'iot-visual'}
       },
       {
         path: 'display',
         name: 'display',
         component: () => import('@/views/iot/display/index'),
-        meta: {title: '数据检测', icon: 'product-list'}
+        meta: {title: '数据检测', icon: 'display'}
       },
       {
         path: 'monitor',
@@ -218,7 +218,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/info/enterprise',
     name: 'info',
-    meta: {title: '基础信息', icon: 'product'},
+    meta: {title: '基础信息', icon: 'order'},
     children: [
       {
         path: 'block',
@@ -361,13 +361,40 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/knowledge/fish',
     name: 'knowledge',
-    meta: {title: '知识库', icon: 'product'},
+    meta: {title: '渔业知识库', icon: 'product'},
     children: [
       {
         path: 'fish',
         name: 'fish',
         component: () => import('@/views/knowledge/fish/index'),
         meta: {title: '渔业知识库', icon: 'product-list'}
+      },
+      {
+        path: 'viewFish',
+        name: 'fiviewFishsh',
+        component: () => import('@/views/knowledge/fish/view'),
+        meta: {title: '查看渔业知识'},
+        hidden: true
+      },
+      {
+        path: 'news',
+        name: 'news',
+        component: () => import('@/views/knowledge/news/index'),
+        meta: {title: '知识库管理', icon: 'product-list'}
+      },
+      {
+        path: 'addNews',
+        name: 'addNews',
+        component: () => import('@/views/knowledge/news/add'),
+        meta: {title: '添加知识库'},
+        hidden: true
+      },
+      {
+        path: 'updateNews',
+        name: 'updateNews',
+        component: () => import('@/views/knowledge/news/update'),
+        meta: {title: '修改知识库'},
+        hidden: true
       },
     ]
   },

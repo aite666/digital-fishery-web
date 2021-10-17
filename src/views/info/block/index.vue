@@ -36,7 +36,7 @@
           layout="total, sizes,prev, pager, next,jumper"
           :current-page.sync="listQuery.pageNum"
           :page-size="listQuery.pageSize"
-          :page-sizes="[5,10,15]"
+          :page-sizes="[8,12,16,24]"
           :total="total">
         </el-pagination>
       </div>
@@ -48,7 +48,7 @@
 
   const defaultListQuery = {
     pageNum: 1,
-    pageSize: 12,
+    pageSize: 8,
     name: null,
   };
   export default {

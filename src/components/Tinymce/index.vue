@@ -1,7 +1,7 @@
 <template>
   <div class="tinymce-container editor-container">
     <textarea class="tinymce-textarea" :id="tinymceId"></textarea>
-    <div class="editor-custom-btn-container">
+    <div class="editor-custom-btn-container" v-if="editorImageVisible">
       <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK"></editorImage>
     </div>
   </div>
@@ -53,6 +53,11 @@
         type: Number,
         required: false,
         default: 720
+      },
+      editorImageVisible: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
     data() {
@@ -122,6 +127,13 @@
       },
       getContent() {
         window.tinymce.get(this.tinymceId).getContent()
+      },
+      getContentText() {
+        var activeEditor = window.tinymce.get(this.tinymceId);
+        let editBody = activeEditor.getBody();
+        activeEditor.selection.select(editBody);
+        let text = activeEditor.selection.getContent( { 'format' : 'text' } );
+        return text;
       },
       imageSuccessCBK(arr) {
         const _this = this

@@ -10,6 +10,7 @@ import BaiduMap from 'vue-baidu-map'
 import dataV from '@jiaminghi/data-view'
 
 import '@/styles/index.scss' // global css
+import '@/assets/icofont/icofont.min.css'
 
 import App from './App'
 import router from './router'
