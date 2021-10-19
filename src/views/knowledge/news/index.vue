@@ -57,15 +57,14 @@
         ref="infoNewsTable"
         :data="list"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
         v-loading="listLoading"
         border
       >
-        <el-table-column
+        <!-- <el-table-column
           type="selection"
           width="60"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column label="标题" align="center">
           <template slot-scope="scope">{{ scope.row.title }}</template>
         </el-table-column>

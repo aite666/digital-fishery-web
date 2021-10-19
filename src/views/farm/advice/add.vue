@@ -1,11 +1,11 @@
 <template> 
-  <advice-detail :is-edit='false'></advice-detail>
+  <advice :is-edit='false'></advice>
 </template>
 <script>
-  import AdviceDetail from './components/AdviceDetail'
+  import Advice from './components/Advice'
   export default {
     name: 'addAdvice',
-    components: { AdviceDetail }
+    components: { Advice }
   }
 </script>
 <style>

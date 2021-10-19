@@ -23,9 +23,8 @@
       <el-table ref="batchTable"
                 :data="list"
                 style="width: 100%;"
-                @selection-change="handleSelectionChange"
                 v-loading="listLoading" border>
-        <el-table-column type="selection" width="60" align="center"></el-table-column>
+        <!-- <el-table-column type="selection" width="60" align="center"></el-table-column> -->
         <el-table-column label="批次号" width="160" align="center">
           <template slot-scope="scope">{{scope.row.code}}</template>
         </el-table-column>

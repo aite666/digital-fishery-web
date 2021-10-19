@@ -19,15 +19,14 @@
         ref="infoStorageRecordTable"
         :data="list"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
         v-loading="listLoading"
         border
       >
-        <el-table-column
+        <!-- <el-table-column
           type="selection"
           width="60"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column label="农资名称" width="160" align="center">
           <template slot-scope="scope">{{ scope.row.storageName }}</template>
         </el-table-column>

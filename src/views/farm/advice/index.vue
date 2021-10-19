@@ -40,9 +40,8 @@
       <el-table ref="infoAdviceTable"
                 :data="list"
                 style="width: 100%;"
-                @selection-change="handleSelectionChange"
                 v-loading="listLoading" border>
-        <el-table-column type="selection" width="60" align="center"></el-table-column>
+        <!-- <el-table-column type="selection" width="60" align="center"></el-table-column> -->
         <el-table-column label="建议名称" width="160" align="center">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
@@ -55,12 +54,19 @@
         <el-table-column label="建议描述" align="center">
           <template slot-scope="scope">{{scope.row.description}}</template>
         </el-table-column>
-        <el-table-column label="操作" width="160" align="center">
+        <el-table-column label="建议步骤" align="center">
+          <template slot-scope="scope">{{scope.row.stepNum}}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="280" align="center">
           <template slot-scope="scope">
             <p>
               <el-button
                 size="mini"
                 @click="handleUpdateAdvice(scope.$index, scope.row)">编辑
+              </el-button>
+              <el-button
+                size="mini"
+                @click="handleUpdateAdviceDetail(scope.$index, scope.row)">具体步骤
               </el-button>
               <el-button
                 size="mini"
@@ -147,6 +153,9 @@
       },
       handleUpdateAdvice(index, row) {
         this.$router.push({path:'/farm/updateAdvice',query:{id:row.id}});
+      },
+      handleUpdateAdviceDetail(index, row) {
+        this.$router.push({path:'/farm/updateAdviceDetail',query:{id:row.id}});
       },
       handleDeleteAdvice(index, row) {
         this.$confirm('是否要进行删除操作?', '提示', {

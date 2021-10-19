@@ -40,9 +40,8 @@
       <el-table ref="infoInspectionTable"
                 :data="list"
                 style="width: 100%;"
-                @selection-change="handleSelectionChange"
                 v-loading="listLoading" border>
-        <el-table-column type="selection" width="60" align="center"></el-table-column>
+        <!-- <el-table-column type="selection" width="60" align="center"></el-table-column> -->
         <el-table-column label="区域名称" width="160" align="center">
           <template slot-scope="scope">{{scope.row.blockName}}</template>
         </el-table-column>

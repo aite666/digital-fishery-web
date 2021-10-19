@@ -36,3 +36,11 @@ export function getAdviceDetailDetail(id) {
     method:'get'
   });
 }
+
+export function updateAdviceDetailBatch(adviceId, dataList) {
+  return request({
+    url:'/adviceDetail/updateBatch/'+adviceId,
+    method:'post',
+    data:dataList
+  })
+}

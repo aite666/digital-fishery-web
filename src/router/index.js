@@ -138,6 +138,13 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'updateAdviceDetail',
+        name: 'updateAdviceDetail',
+        component: () => import('@/views/farm/advice/updateAdviceDetail'),
+        meta: {title: '编辑农事建议详情'},
+        hidden: true
+      },
+      {
         path: 'storage',
         name: 'storage',
         component: () => import('@/views/farm/storage/index'),

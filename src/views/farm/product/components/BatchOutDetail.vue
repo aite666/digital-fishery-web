@@ -68,10 +68,13 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="单价：" class="input-width">
+    <el-form-item
+      label="单价："
+      v-if="batchOutDetail.outType == 1"
+      class="input-width"
+    >
       <el-input-number
         v-model="saleDetail.unitPrice"
-        v-if="batchOutDetail.outType == 1"
         :min="0"
         :max="100000000000000000"
       ></el-input-number>
