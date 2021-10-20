@@ -17,21 +17,24 @@
       <div class="right">
         <ul class="list d-f">
           <li>
-            <div class="icon"><i class="el-icon-grape"></i></div>
+            <!-- <div class="icon"><i class="el-icon-grape"></i></div> -->
+            <div class="icon"><svg-icon icon-class="fish2" class="color-main"></svg-icon></div> 
             <div class="info">
               <h3>{{ productCategoryNum }}</h3>
               <span>当前养殖鱼类</span>
             </div>
           </li>
           <li>
-            <div class="icon"><i class="el-icon-refrigerator"></i></div>
+            <!-- <div class="icon"><i class="el-icon-refrigerator"></i></div> -->
+            <div class="icon"><svg-icon icon-class="batch" class="color-main"></svg-icon></div> 
             <div class="info">
               <h3>{{ batchNum }}</h3>
               <span>投放批次</span>
             </div>
           </li>
           <li>
-            <div class="icon"><i class="el-icon-s-tools"></i></div>
+            <!-- <div class="icon"><i class="el-icon-s-tools"></i></div> -->
+            <div class="icon"><svg-icon icon-class="outBlock" class="color-main"></svg-icon></div> 
             <div class="info">
               <h3>{{ outRecordNum }}</h3>
               <span>出塘记录</span>
@@ -50,6 +53,7 @@
           <el-card shadow="always">
             <div class="card-content-item">{{ stat.productCategoryName }}</div>
             <div class="card-content-item">总批次数: {{ stat.batchCount }}</div>
+            <div class="card-content-item">总量: {{ stat.batchTotal | formatBatchTotal}}</div>
           </el-card>
         </el-col>
       </el-row>
@@ -220,6 +224,11 @@ export default {
   },
   created() {
     this.getProductCategoryStats();
+  },
+  filters: {
+      formatBatchTotal(formatBatch) {
+        return formatBatch.replaceAll(',', '+');
+      },
   },
   computed: {},
   methods: {

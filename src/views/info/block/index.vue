@@ -22,8 +22,8 @@
             <div @click="handleViewBlock(item.id)" class="card-hover">
               <div class="card-content-item">介绍：{{ item.description }}</div>
               <div class="card-content-item">面积：{{ item.area }}亩</div>
-              <div class="card-content-item">种养品种：鱼</div>
-              <div class="card-content-item">种养批次：123</div>
+              <div class="card-content-item">养殖品种：鱼</div>
+              <div class="card-content-item">养殖批次：123</div>
             </div>
           </el-card>
         </el-col>

@@ -11,14 +11,16 @@
             <div class="right">
                 <ul class="list d-f">
                     <li>
-                        <div class="icon"><i class="el-icon-grape"></i></div>
+                        <!-- <div class="icon"><i class="el-icon-grape"></i></div> -->
+                        <div class="icon"><svg-icon icon-class="monitor" class="color-main"></svg-icon></div>
                         <div class="info">
                             <h3>10</h3>
                             <span>监测信息</span>
                         </div>
                     </li>
                     <li>
-                        <div class="icon"><i class="el-icon-refrigerator"></i></div>
+                        <!-- <div class="icon"><i class="el-icon-refrigerator"></i></div> -->
+                        <div class="icon"><svg-icon icon-class="alert" class="color-main"></svg-icon></div>
                         <div class="info">
                             <h3>10</h3>
                             <span>警告信息</span>

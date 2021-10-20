@@ -4,28 +4,32 @@
       <div class="right">
         <ul class="list d-f">
           <li>
-            <div class="icon"><i class="el-icon-refrigerator"></i></div>
+            <!-- <div class="icon"><i class="el-icon-refrigerator"></i></div> -->
+            <div class="icon"><svg-icon icon-class="storage-in" class="color-main"></svg-icon></div> 
             <div class="info">
               <h3>{{ inNum }}</h3>
               <span>本月入库</span>
             </div>
           </li>
           <li>
-            <div class="icon"><i class="el-icon-refrigerator"></i></div>
+            <!-- <div class="icon"><i class="el-icon-refrigerator"></i></div> -->
+            <div class="icon"><svg-icon icon-class="storage-out" class="color-main"></svg-icon></div> 
             <div class="info">
               <h3>{{ outNum }}</h3>
               <span>本月出库</span>
             </div>
           </li>
           <li>
-            <div class="icon"><i class="el-icon-s-tools"></i></div>
+            <!-- <div class="icon"><i class="el-icon-s-tools"></i></div> -->
+            <div class="icon"><svg-icon icon-class="storage-less" class="color-main"></svg-icon></div> 
             <div class="info">
               <h3>{{ lessNum }}</h3>
               <span>偏少农资</span>
             </div>
           </li>
           <li>
-            <div class="icon"><i class="el-icon-s-tools"></i></div>
+            <!-- <div class="icon"><i class="el-icon-s-tools"></i></div> -->
+            <div class="icon"><svg-icon icon-class="storage-more" class="color-main"></svg-icon></div> 
             <div class="info">
               <h3>{{ moreNum }}</h3>
               <span>偏多农资</span>

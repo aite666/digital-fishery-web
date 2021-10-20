@@ -202,6 +202,7 @@
               duration: 1000
             });
             this.getList();
+            this.$emit('getAllList');
           });
         });
       },
@@ -219,6 +220,7 @@
               duration: 1000
             });
             this.getList();
+            this.$emit('getAllList');
           });
         });
       },

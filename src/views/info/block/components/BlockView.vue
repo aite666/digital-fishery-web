@@ -7,28 +7,32 @@
             <div class="right">
                 <ul class="list d-f">
                     <li>
-                        <div class="icon"><i class="el-icon-s-tools"></i></div>
+                        <!-- <div class="icon"><i class="el-icon-s-tools"></i></div> -->
+                        <div class="icon"><svg-icon icon-class="equipment" class="color-main"></svg-icon></div>
                         <div class="info">
-                            <h3>10</h3>
+                            <h3>4</h3>
                             <span>设备数</span>
                         </div>
                     </li>
                     <li>
-                        <div class="icon"><i class="el-icon-grape"></i></div>
+                        <!-- <div class="icon"><i class="el-icon-grape"></i></div> -->
+                        <div class="icon"><svg-icon icon-class="fish2" class="color-main"></svg-icon></div>
                         <div class="info">
                             <h3>2</h3>
-                            <span>种养品种数</span>
+                            <span>养殖品种数</span>
                         </div>
                     </li>
                     <li>
-                        <div class="icon"><i class="el-icon-refrigerator"></i></div>
+                        <!-- <div class="icon"><i class="el-icon-refrigerator"></i></div> -->
+                        <div class="icon"><svg-icon icon-class="batch" class="color-main"></svg-icon></div> 
                         <div class="info">
-                            <h3>30</h3>
-                            <span>种养批次数</span>
+                            <h3>3</h3>
+                            <span>养殖批次数</span>
                         </div>
                     </li>
                     <li>
-                        <div class="icon"><i class="el-icon-user"></i></div>
+                        <!-- <div class="icon"><i class="el-icon-user"></i></div> -->
+                        <div class="icon"><svg-icon icon-class="ums-role" class="color-main"></svg-icon></div> 
                         <div class="info">
                             <h3>1</h3>
                             <span>管理员人数</span>
@@ -40,84 +44,12 @@
         <div class="content">
             <el-tabs v-model="activeName">
                 <el-tab-pane label="设备" name="first">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="种养品种" name="second">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
+                <el-tab-pane label="养殖品种" name="second">
                 </el-tab-pane>
-                <el-tab-pane label="种养批次" name="third">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
+                <el-tab-pane label="养殖批次" name="third">
                 </el-tab-pane>
                 <el-tab-pane label="管理员" name="fourth">
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="address"
-                            label="地址">
-                        </el-table-column>
-                    </el-table>
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -140,23 +72,6 @@
       return {
         blockViewDetail: Object.assign({}, defaultBlockDetail),
         activeName: 'first',
-        tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
       }
     },
     created() {
