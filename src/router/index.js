@@ -37,6 +37,10 @@ export const constantRouterMap = [
     component: () => import('@/views/opening/riceTurtl/index'),
     hidden: true,
   },
+  {path: '/opening/iotVisual', 
+    component: () => import('@/views/opening/iotVisual/index'),
+    hidden: true,
+  },
   {
     path: '',
     component: Layout,
