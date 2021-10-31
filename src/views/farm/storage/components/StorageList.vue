@@ -13,7 +13,10 @@
     <span>只显示预警库存 </span>
     <el-switch v-model="thresholdVisible" @change="changeThresholdVisible">
     </el-switch>
-    <el-button style="float: right" type="primary" @click="handleAddStorage()">
+    <el-button style="float: right" type="primary" @click="handleAddStorageCate()">
+      新增农资种类
+    </el-button>
+    <el-button style="float: right;margin-right: 10px;" type="primary" @click="handleAddStorage()">
       新增农资商品
     </el-button>
     <el-row :gutter="12" style="margin: 20px 0 20px 0">
@@ -174,6 +177,9 @@ export default {
     },
     handleViewStorage(rowId) {
       this.$router.push({ path: "/farm/viewStorage", query: { id: rowId } });
+    },
+    handleAddStorageCate() {
+      this.$router.push({path: '/info/productCate', query: {parentId: 0}});
     },
     handleDeleteStorage(rowId) {
       this.$confirm("是否要进行删除操作?", "提示", {

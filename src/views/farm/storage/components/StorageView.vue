@@ -15,6 +15,15 @@
             生产厂商：{{ storageDetail.manufacturer }}
           </div>
           <div class="card-content-item">
+            许可证号：{{ storageDetail.license }}
+          </div>
+          <div class="card-content-item">
+            生产日期：{{ storageDetail.productionDate | formatProductionDate }}
+          </div>
+          <div class="card-content-item">
+            供货主体及联系人、联系电话：{{ storageDetail.contacts }}
+          </div>
+          <div class="card-content-item">
             库存：{{ storageDetail.quantity }} {{ storageDetail.unit }}
           </div>
         </div>
@@ -182,6 +191,10 @@ export default {
   },
   filters: {
     formatRecordTime(time) {
+      let date = new Date(time);
+      return formatDate(date, "yyyy-MM-dd");
+    },
+    formatProductionDate(time) {
       let date = new Date(time);
       return formatDate(date, "yyyy-MM-dd");
     },

@@ -116,30 +116,22 @@
             </el-tab-pane>
             <el-tab-pane label="设备绑定" name="second"
               ><div class="deviceBox">
-                <div class="device">
-                  <div class="deviceInfo">
-                    <span style="color: rgb(51, 51, 51)">电磁阀</span
-                    ><span style="color: rgb(144, 147, 153)"
-                      >122973540186relay0</span
-                    >
-                  </div>
-                  <div class="handle">
-                    <i class="el-icon-delete"></i>
-                  </div>
-                </div>
-                <div class="device">
-                  <div class="deviceInfo">
-                    <span style="color: rgb(51, 51, 51)">电磁阀</span
-                    ><span style="color: rgb(144, 147, 153)"
-                      >122973540186relay0</span
-                    >
-                  </div>
-                  <div class="handle">
-                    <i class="el-icon-delete"></i>
+                <div v-for="item of allDeviceList" :key="item.id">
+                  <div class="device" 
+                    v-if="currentBlock && currentBlock.id == item.blockId">
+                    <div class="deviceInfo">
+                      <span style="color: rgb(51, 51, 51)">{{ item.deviceType }}</span
+                      ><span style="color: rgb(144, 147, 153)"
+                        >{{ item.deviceName }}</span
+                      >
+                    </div>
+                    <div class="handle">
+                      <i class="el-icon-delete" @click="deleteDevice(item)"></i>
+                    </div>
                   </div>
                 </div>
                 <div class="footerTip">
-                  <el-button type="primary"> 添加设备 </el-button>
+                  <el-button type="primary" @click="addDevice()"> 添加设备 </el-button>
                 </div>
               </div>
             </el-tab-pane>
@@ -147,6 +139,39 @@
         </div>
       </el-aside>
     </el-container>
+    <el-dialog
+      :title="'添加设备'"
+      :visible.sync="dialogVisible"
+      width="60%"
+    >
+      <el-table
+        ref="deviceTable"
+        :data="freeDeviceList"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        border
+      >
+        <el-table-column type="selection" width="60" align="center"></el-table-column>
+        <el-table-column label="设备名称" align="center">
+          <template slot-scope="scope">{{ scope.row.deviceName }}</template>
+        </el-table-column>
+        <el-table-column label="设备地址码" align="center">
+          <template slot-scope="scope">{{ scope.row.deviceAddr }}</template>
+        </el-table-column>
+        <el-table-column label="设备类型" align="center">
+          <template slot-scope="scope">{{ scope.row.deviceType }}</template>
+        </el-table-column>
+        <el-table-column label="状态" align="center">
+          <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleDialogConfirm()" size="small"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </el-container>
 </template>
 <script>
@@ -157,6 +182,10 @@ import {
   deleteBlock,
   getBlockDetail,
 } from "@/api/block";
+import {
+  fetchAllDeviceList,
+  updateDevice
+} from "@/api/device";
 const defaultListQuery = {
   pageNum: 1,
   pageSize: 100000,
@@ -202,10 +231,15 @@ export default {
       listQuery: Object.assign({}, defaultListQuery),
       blockList: null,
       deleteBlockIds: [],
+      allDeviceList: [],
+      freeDeviceList: [],
+      dialogVisible: false,
+      multipleSelection: [],
     };
   },
   created() {
     this.getList();
+    this.getAllDevice();
   },
   computed: {
     $map() {
@@ -243,6 +277,15 @@ export default {
       }
     },
   },
+  filters: {
+    formatStatus(value) {
+      if (value == 1) {
+        return "在线";
+      } else {
+        return "离线";
+      }
+    },
+  },
   methods: {
     getList() {
       fetchList(this.listQuery).then((response) => {
@@ -259,6 +302,11 @@ export default {
           polygonList.push(polygon);
         }
         this.polygonList = polygonList;
+      });
+    },
+    getAllDevice() {
+      fetchAllDeviceList().then((response) => {
+        this.allDeviceList = response.data.list;
       });
     },
     onDraw(type, res) {
@@ -412,6 +460,9 @@ export default {
             deleteBlock(deleteBlockId).then((response) => {});
           }
         }
+        for (let item of this.allDeviceList) {
+          updateDevice(item.id, item).then((response) => {});
+        }
         this.$message({
           message: "发布成功",
           type: "success",
@@ -419,6 +470,54 @@ export default {
         });
       });
     },
+    deleteDevice(deviceInfo) {
+      this.$confirm("是否要进行删除操作?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        deviceInfo.BlockId = null;
+      });
+    },
+    addDevice() {
+      if (this.currentBlock) {
+        this.dialogVisible = true;
+        this.getFreeDeviceList();
+        this.multipleSelection = [];
+      } else {
+        this.$message({
+          message: "请选择一个区块",
+          type: "warning",
+          duration: 1000,
+        });
+      }
+    },
+    getFreeDeviceList() {
+      let freeDeviceList = [];
+        for (let item of this.allDeviceList) {
+          if (item.blockId == null) {
+            freeDeviceList.push(item);
+          }
+        }
+        this.freeDeviceList = freeDeviceList;
+    },
+    handleSelectionChange(val) {
+      console.log(val)
+      let multipleSelection = [];
+      for (let item of val) {
+        multipleSelection.push(item.deviceName)
+      }
+      this.multipleSelection = multipleSelection;
+    },
+    handleDialogConfirm() {
+      for (let item of this.allDeviceList) {
+        if (this.multipleSelection.indexOf(item.deviceName) > -1) {
+          item.blockId = this.currentBlock.id;
+        }
+      }
+      this.getFreeDeviceList();
+      this.dialogVisible = false;
+    }
   },
 };
 </script>

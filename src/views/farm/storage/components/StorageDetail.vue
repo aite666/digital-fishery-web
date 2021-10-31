@@ -4,7 +4,7 @@
       :model="storageDetail"
       :rules="rules"
       ref="storageForm"
-      label-width="120px"
+      label-width="150px"
     >
       <el-form-item label="农资名称：" prop="name">
         <el-input v-model="storageDetail.name"></el-input>
@@ -33,9 +33,29 @@
       <el-form-item label="生产厂商：" prop="manufacturer">
         <el-input v-model="storageDetail.manufacturer"></el-input>
       </el-form-item>
+      <el-form-item label="许可证号：" prop="license">
+        <el-input v-model="storageDetail.license"></el-input>
+      </el-form-item>
+      <el-form-item label="生产日期：" prop="productionDate">
+        <el-date-picker
+            class="input-width"
+            v-model="storageDetail.productionDate"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="date"
+            placeholder="请选择时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="供货主体及联系人、联系电话：" prop="contacts">
+        <el-input
+          :autosize="{ minRows: 3 }"
+          v-model="storageDetail.contacts"
+          type="textarea"
+          placeholder="请输入供货主体及联系人、联系电话"
+        ></el-input>
+      </el-form-item>
       <el-form-item label="备注：" prop="remark">
         <el-input
-          :autosize="{ minRows: 4 }"
+          :autosize="{ minRows: 3 }"
           v-model="storageDetail.remark"
           type="textarea"
           placeholder="请输入备注"
@@ -83,17 +103,20 @@ import {
 } from "@/api/storage";
 
 const defaultStorageDetail = {
-  enterpriseId: 0,
-  name: "",
-  productCategoryId: 0,
-  productCategoryName: "",
+  enterpriseId: null,
+  name: null,
+  productCategoryId: null,
+  productCategoryName: null,
   unit: "克",
-  brand: "",
-  manufacturer: "",
-  remark: "",
+  brand: null,
+  manufacturer: null,
+  remark: null,
   max_threshold: 0,
   max_threshold: 0,
   quantity: 0,
+  license: null,
+  productionDate: null,
+  contacts: null,
 };
 export default {
   name: "StorageDetail",

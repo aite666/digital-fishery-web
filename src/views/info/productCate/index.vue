@@ -122,8 +122,19 @@
         this.listLoading = true;
         fetchList(this.parentId, this.listQuery).then(response => {
           this.listLoading = false;
-          this.list = response.data.list;
-          this.total = response.data.total;
+          let list = response.data.list;
+          let newList = [];
+          for (let item of list) {
+            if (item.id != 1) {
+              newList.push(item);
+            }
+          }
+          this.list = newList;
+          if (this.parentId == 0) {
+            this.total = response.data.total - 1;
+          } else {
+            this.total = response.data.total;
+          }
         });
       },
       handleSizeChange(val) {
@@ -139,7 +150,11 @@
         this.$router.push({path: '/info/productCate', query: {parentId: row.id}})
       },
       handleShowUpperLevel() {
-        this.$router.push({path: '/info/productCate', query: {parentId: 0}})
+        if (this.$route.query.parentId == 1) {
+          this.$router.back();
+        } else {
+          this.$router.push({path: '/info/productCate', query: {parentId: 0}})
+        }
       },
       handleUpdate(index, row) {
         this.$router.push({path:'/info/updateProductCate',query:{id:row.id}});

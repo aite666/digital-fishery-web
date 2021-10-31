@@ -12,19 +12,27 @@
         @hotspotclick="onHotspotClick"
       >
         <amap-polygon
-            ref="polygons"
-            v-for="item in polygonList"
-            :key="item.index"
-            clickable
-            @click="activePolygon && activePolygon.index == item.index ? activePolygon = null : activePolygon = item"
-            @mouseover="hoverPolygon = item"
-            @mouseout="hoverPolygon = null"
-            :path.sync="item.path"
-            :fill-color="item.fill"
-            :fill-opacity="item === activePolygon ? 0.8 : item === hoverPolygon ? 0.4 : 0.1"
-            :stroke-weight="item === activePolygon || item === hoverPolygon ? 2 : 1"
-          >
-          </amap-polygon>
+          ref="polygons"
+          v-for="item in polygonList"
+          :key="item.index"
+          clickable
+          @click="
+            activePolygon && activePolygon.index == item.index
+              ? (activePolygon = null)
+              : (activePolygon = item)
+          "
+          @mouseover="hoverPolygon = item"
+          @mouseout="hoverPolygon = null"
+          :path.sync="item.path"
+          :fill-color="item.fill"
+          :fill-opacity="
+            item === activePolygon ? 0.8 : item === hoverPolygon ? 0.4 : 0.1
+          "
+          :stroke-weight="
+            item === activePolygon || item === hoverPolygon ? 2 : 1
+          "
+        >
+        </amap-polygon>
         <amap-satellite-layer :visible="satellite" />
         <!-- <amap-marker
           v-if="position"
@@ -68,13 +76,19 @@
       <div class="right-b d-f ai-c">
         <el-button-group>
           <el-button class="right-button" @click="handleUpdateMap()">
-            <i class="el-icon-edit" style="margin-right:10px;"></i>编辑</el-button>
+            <i class="el-icon-edit" style="margin-right: 10px"></i
+            >编辑</el-button
+          >
           <el-button class="right-button" v-if="!isFull" @click="fullScreen()">
-            <i class="el-icon-full-screen" style="margin-right:0px;"></i>
+            <i class="el-icon-full-screen" style="margin-right: 0px"></i>
             <span>全屏</span>
           </el-button>
-          <el-button class="right-button" v-if="isFull" @click="exitFullScreen()">
-            <i class="el-icon-full-screen" style="margin-right:0px;"></i>
+          <el-button
+            class="right-button"
+            v-if="isFull"
+            @click="exitFullScreen()"
+          >
+            <i class="el-icon-full-screen" style="margin-right: 0px"></i>
             <span>退出全屏</span>
           </el-button>
         </el-button-group>
@@ -84,10 +98,13 @@
       <div class="side-card">
         <div class="title">
           <span v-if="activePolygon === null">区域信息</span>
-          <span v-if="activePolygon">{{ activePolygon.blockName }}（{{ activePolygon.blockArea }}亩）</span>
+          <span v-if="activePolygon">{{ activePolygon.blockName }}</span>
         </div>
         <div class="air" v-if="activePolygon === null">
-          <div class="temp"><strong>{{ todayTemp }}</strong>℃</div>
+          <div class="temp">
+            <strong>{{ todayTemp }}</strong
+            >℃
+          </div>
           <div class="RH d-f ai-c">
             <span>{{ todayWeather }}</span>
             相对湿度{{ todayHumidity }}%
@@ -104,21 +121,25 @@
           </div>
         </div>
         <div class="device-statistic d-f">
-          <div class="item">
+          <div class="item" v-if="activePolygon === null">
             <h4 data-v-46f4e097="">区块数</h4>
             <div class="num">{{ polygonList.length }}</div>
           </div>
+          <div class="item" v-if="activePolygon">
+            <h4 data-v-46f4e097="">面积(亩)</h4>
+            <div class="num">{{ activePolygon.blockArea }}</div>
+          </div>
           <div class="item">
             <h4 data-v-46f4e097="">监测设备</h4>
-            <div class="num">4</div>
+            <div class="num">{{ deviceNum }}</div>
           </div>
           <div class="item">
-            <h4 data-v-46f4e097="">养殖品种</h4>
-            <div class="num">2</div>
+            <h4 data-v-46f4e097="">养殖鱼类</h4>
+            <div class="num">{{ productCategoryNum }}</div>
           </div>
           <div class="item">
-            <h4 data-v-46f4e097="">养殖批次</h4>
-            <div class="num">10</div>
+            <h4 data-v-46f4e097="">投放批次</h4>
+            <div class="num">{{ batchNum }}</div>
           </div>
         </div>
         <div class="state-statistic">
@@ -146,10 +167,15 @@
           v-for="item in polygonList"
           :key="item.index"
           @mouseover="hoverPolygon = item"
-          @click="activePolygon ? activePolygon = null : activePolygon = item"
+          @click="
+            activePolygon ? (activePolygon = null) : (activePolygon = item)
+          "
         >
-          <span :class="{ active: item === activePolygon || item === hoverPolygon }">
-          </span>{{ item.blockName }}
+          <span
+            :class="{ active: item === activePolygon || item === hoverPolygon }"
+          >
+          </span
+          >{{ item.blockName }}
         </li>
       </ul>
     </div>
@@ -164,10 +190,9 @@ import {
   deleteBlock,
   getBlockDetail,
 } from "@/api/block";
-import {
-  getLiveWeather,
-  getForecastWeather
-} from "@/api/weather";
+import { getLiveWeather, getForecastWeather } from "@/api/weather";
+import { getProductCategoryList } from "@/api/batch";
+import { getDeviceList } from "@/api/device";
 const defaultListQuery = {
   pageNum: 1,
   pageSize: 100000,
@@ -177,7 +202,7 @@ const defaultPolygon = {
   id: null,
   index: null,
   path: [],
-  fill: '#409EFF',
+  fill: "#409EFF",
   blockName: null,
   blockDescription: null,
   blockArea: null,
@@ -213,13 +238,13 @@ export default {
       path: [],
       editable: false,
       draggable: true,
-      fill: '#409EFF',
+      fill: "#409EFF",
       polygonList: [],
       listQuery: Object.assign({}, defaultListQuery),
       blockList: null,
       hoverPolygon: null,
       activePolygon: null,
-      cityCode: '330523',
+      cityCode: "330523",
       todayTemp: null,
       todayWeather: null,
       todayHumidity: null,
@@ -229,11 +254,28 @@ export default {
       afterTomorrowWeather: null,
       afterTomorrowDaytemp: null,
       afterTomorrowNighttemp: null,
+      deviceNum: 0,
+      productCategoryNum: 0,
+      batchNum: 0,
     };
   },
   created() {
     this.getList();
     this.getWeather();
+    this.getProductCategoryStats(null);
+    this.getDeviceNum(null);
+  },
+  watch: {
+    activePolygon(val, valOld) {
+      debugger;
+      if (val == null) {
+        this.getDeviceNum(null);
+        this.getProductCategoryStats(null);
+      } else {
+        this.getDeviceNum(val.id);
+        this.getProductCategoryStats(val.id);
+      }
+    },
   },
   computed: {
     positionText() {
@@ -277,22 +319,34 @@ export default {
       window.open(url, "_blank");
     },
     fullScreen() {
-        if (this.isFull) {
-          return this.exitFullScreen();
-        }
-        var e = this.$refs.baseVideoBox;
-        e.requestFullscreen ? e.requestFullscreen() : e.webkitRequestFullScreen ? e.webkitRequestFullScreen() : e.mozRequestFullScreen ? e.mozRequestFullScreen() : e.msRequestFullscreen(),
-        this.isFull = true;
+      if (this.isFull) {
+        return this.exitFullScreen();
+      }
+      var e = this.$refs.baseVideoBox;
+      e.requestFullscreen
+        ? e.requestFullscreen()
+        : e.webkitRequestFullScreen
+        ? e.webkitRequestFullScreen()
+        : e.mozRequestFullScreen
+        ? e.mozRequestFullScreen()
+        : e.msRequestFullscreen(),
+        (this.isFull = true);
     },
     exitFullScreen() {
-      document.exitFullscreen ? document.exitFullscreen() : document.mozCancelFullScreen ? document.mozCancelFullScreen() : document.msExitFullscreen ? document.msExiFullscreen() : document.webkitCancelFullScreen && document.webkitCancelFullScreen(),
-      this.isFull = false;
+      document.exitFullscreen
+        ? document.exitFullscreen()
+        : document.mozCancelFullScreen
+        ? document.mozCancelFullScreen()
+        : document.msExitFullscreen
+        ? document.msExiFullscreen()
+        : document.webkitCancelFullScreen && document.webkitCancelFullScreen(),
+        (this.isFull = false);
     },
     getWeather() {
       getLiveWeather(this.cityCode).then((response) => {
         if (response.status == 200) {
           let data = response.data;
-          if ('lives' in data) {
+          if ("lives" in data) {
             this.todayTemp = data.lives[0].temperature;
             this.todayWeather = data.lives[0].weather;
             this.todayHumidity = data.lives[0].humidity;
@@ -302,7 +356,7 @@ export default {
       getForecastWeather(this.cityCode).then((response) => {
         if (response.status == 200) {
           let data = response.data;
-          if ('forecasts' in data) {
+          if ("forecasts" in data) {
             this.tomorrowWeather = data.forecasts[0].casts[1].dayweather;
             this.tomorrowDaytemp = data.forecasts[0].casts[1].daytemp;
             this.tomorrowNighttemp = data.forecasts[0].casts[1].nighttemp;
@@ -312,7 +366,29 @@ export default {
           }
         }
       });
-    }
+    },
+    getProductCategoryStats(blockId) {
+      getProductCategoryList(blockId).then((response) => {
+        let productCategoryNum = 0;
+        let batchNum = 0;
+        for (let item of response.data) {
+          productCategoryNum += 1;
+          batchNum += item["batchCount"];
+        }
+        this.productCategoryNum = productCategoryNum;
+        this.batchNum = batchNum;
+      });
+    },
+    getDeviceNum(blockId) {
+      let query = {
+        pageNum: 1,
+        pageSize: 100000,
+        blockId: blockId,
+      };
+      getDeviceList(query).then((response) => {
+        this.deviceNum = response.data.total;
+      });
+    },
   },
 };
 </script>
@@ -359,7 +435,7 @@ export default {
   position: relative;
   z-index: 999;
 }
-.contain .heade .right-b .right-button{
+.contain .heade .right-b .right-button {
   width: 130px;
 }
 /* .contain .heade .right-b .right-button i{
@@ -493,7 +569,7 @@ export default {
   color: rgb(255, 255, 255);
 }
 .contain .color-desc .list li:last-child {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 .contain .color-desc .list li span {
   margin-right: 10px;
@@ -503,7 +579,7 @@ export default {
   border-radius: 50%;
 }
 .contain .color-desc .list li span.active {
-  background-color: #409EFF;
+  background-color: #409eff;
 }
 </style>
 <style>

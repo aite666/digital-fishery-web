@@ -86,6 +86,26 @@ export const asyncRouterMap = [
         component: () => import('@/views/iot/video/index'),
         meta: {title: '视频监控', icon: 'product-list'}
       },
+      {
+        path: 'equipment',
+        name: 'equipment',
+        component: () => import('@/views/iot/equipment/index'),
+        meta: {title: '设备管理', icon: 'product-list'}
+      },
+      {
+        path: 'deviceFactor',
+        name: 'deviceFactor',
+        component: () => import('@/views/iot/equipment/components/FactorList'),
+        meta: {title: '设备因子信息'},
+        hidden: true
+      },
+      {
+        path: 'deviceRelay',
+        name: 'deviceRelay',
+        component: () => import('@/views/iot/equipment/components/RelayList'),
+        meta: {title: '设备继电器信息'},
+        hidden: true
+      },
     ]
   },
   {

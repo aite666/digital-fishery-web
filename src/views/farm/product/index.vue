@@ -8,6 +8,9 @@
             <el-button class="add-button" type="primary" @click="handleAdd()"
               >添加养殖鱼类</el-button
             >
+            <el-button class="add-button2" type="primary" @click="handleAddFishCate()"
+              >添加鱼种类</el-button
+            >
           </div>
           <p class="extra-info" v-if="blockSelected">
             区域面积：{{ blockSelected.area }}亩
@@ -278,6 +281,9 @@ export default {
         });
       }
     },
+    handleAddFishCate() {
+      this.$router.push({path: '/info/productCate', query: {parentId: 1}});
+    },
     handleDelete(index, row) {
       this.$confirm("是否要删除该养殖批次?", "提示", {
         confirmButtonText: "确定",
@@ -356,7 +362,10 @@ export default {
   line-height: 17px;
 }
 .add-button {
-  margin: 0 30px 0 24px;
+  margin: 0 5px 0 10px;
+}
+.add-button2 {
+  margin: 0 20px 0 5px;
 }
 .d-f {
   display: -webkit-box;

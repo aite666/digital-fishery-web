@@ -28,11 +28,18 @@
           size="small"
           label-width="140px"
         >
-          <el-form-item label="设备种类名称：">
+          <el-form-item label="因子编号：">
             <el-input
-              v-model="listQuery.name"
+              v-model="listQuery.factorId"
               class="input-width"
-              placeholder="设备种类名称"
+              placeholder="因子编号"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="因子名称：">
+            <el-input
+              v-model="listQuery.factorName"
+              class="input-width"
+              placeholder="因子名称"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -42,56 +49,79 @@
       <i class="el-icon-tickets"></i>
       <span>数据列表</span>
       <el-button
-        v-if="showUpperLevel"
         class="btn-add"
-        style="margin-left: 10px;"
         @click="handleShowUpperLevel()"
         size="mini">
         返回上一级
       </el-button>
-      <el-button
-        class="btn-add"
-        @click="handleAddEquipmentCategory()"
-        size="mini"
-      >
-        添加
-      </el-button>
     </el-card>
     <div class="table-container">
       <el-table
-        ref="infoEquipmentCateable"
+        ref="deviceFactorTable"
         :data="list"
         style="width: 100%"
         v-loading="listLoading"
         border
       >
         <!-- <el-table-column type="selection" width="60" align="center"></el-table-column> -->
-        <el-table-column label="设备种类名称" width="160" align="center">
-          <template slot-scope="scope">{{ scope.row.name }}</template>
+        <el-table-column label="设备地址码" align="center">
+          <template slot-scope="scope">{{ scope.row.deviceAddr }}</template>
         </el-table-column>
-        <el-table-column label="描述" align="center">
-          <template slot-scope="scope">{{ scope.row.description }}</template>
+        <el-table-column label="因子编号" align="center">
+          <template slot-scope="scope">{{ scope.row.factorId }}</template>
         </el-table-column>
-        <el-table-column label="排序" width="100" align="center">
-          <template slot-scope="scope">{{ scope.row.sort }}</template>
+        <el-table-column label="因子名称" align="center">
+          <template slot-scope="scope">{{ scope.row.factorName }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="160" align="center">
+        <el-table-column label="节点编号" align="center">
+          <template slot-scope="scope">{{ scope.row.nodeId }}</template>
+        </el-table-column>
+        <el-table-column label="是否启用" align="center">
+          <template slot-scope="scope">{{
+            scope.row.enabled | formatEnabled
+          }}</template>
+        </el-table-column>
+        <el-table-column label="状态" align="center">
+          <template slot-scope="scope">{{
+            scope.row.status | formatStatus
+          }}</template>
+        </el-table-column>
+        <el-table-column label="偏差" align="center">
+          <template slot-scope="scope">{{ scope.row.offset }}</template>
+        </el-table-column>
+        <el-table-column label="单位" align="center">
+          <template slot-scope="scope">{{ scope.row.unit }}</template>
+        </el-table-column>
+        <el-table-column label="报警延时" align="center">
+          <template slot-scope="scope">{{ scope.row.alarmDelay }}分钟</template>
+        </el-table-column>
+        <el-table-column label="报警频率" align="center">
+          <template slot-scope="scope">{{ scope.row.alarmRate }}</template>
+        </el-table-column>
+        <el-table-column label="报警延时" align="center">
+          <template slot-scope="scope">{{ scope.row.alarmDelay }}</template>
+        </el-table-column>
+        <el-table-column label="系数" align="center">
+          <template slot-scope="scope">{{ scope.row.coefficient }}</template>
+        </el-table-column>
+        <el-table-column label="小数位数" align="center">
+          <template slot-scope="scope">{{ scope.row.digits }}</template>
+        </el-table-column>
+        <!-- <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
-            <p v-if="scope.row.name != '采集设备'">
+            <p>
               <el-button
                 size="mini"
-                @click="handleUpdateEquipmentCategory(scope.$index, scope.row)"
-                >编辑
+                @click="handleUpdateDeviceFactor(scope.$index, scope.row)">编辑
               </el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDeleteEquipmentCategory(scope.$index, scope.row)"
-                >删除
+                @click="handleDeleteDeviceFactor(scope.$index, scope.row)">删除
               </el-button>
             </p>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </div>
     <div class="pagination-container">
@@ -110,30 +140,46 @@
   </div>
 </template>
 <script>
-import { fetchList, deleteEquipmentCategory } from "@/api/equipmentCate";
+import { fetchList } from "@/api/deviceFactor";
 import { formatDate } from "@/utils/date";
 const defaultListQuery = {
   pageNum: 1,
   pageSize: 10,
-  name: null,
+  factorId: null,
+  factorName: null,
+  deviceAddr: null,
 };
 export default {
-  name: "infoEquipmentCateist",
+  name: "deviceFactorList",
   components: {},
+  props: {},
   data() {
     return {
       listQuery: Object.assign({}, defaultListQuery),
       listLoading: true,
       list: null,
       total: null,
-      showUpperLevel: false,
     };
   },
   created() {
-    this.showUpperLevel = this.$route.query.showUpperLevel == 1 ? true : false;
     this.getList();
   },
-  filters: {},
+  filters: {
+    formatEnabled(value) {
+      if (value == 1) {
+        return "开启";
+      } else {
+        return "关闭";
+      }
+    },
+    formatStatus(value) {
+      if (value == 1) {
+        return "在线";
+      } else {
+        return "离线";
+      }
+    },
+  },
   methods: {
     handleResetSearch() {
       this.listQuery = Object.assign({}, defaultListQuery);
@@ -141,9 +187,6 @@ export default {
     handleSearchList() {
       this.listQuery.pageNum = 1;
       this.getList();
-    },
-    handleAddEquipmentCategory() {
-      this.$router.push({ path: "/info/addEquipmentCate" });
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -157,37 +200,16 @@ export default {
       this.listQuery.pageNum = val;
       this.getList();
     },
+    handleShowUpperLevel() {
+      this.$router.back();
+    },
     getList() {
       this.listLoading = true;
+      this.listQuery.deviceAddr = this.$route.query.deviceAddr;
       fetchList(this.listQuery).then((response) => {
         this.listLoading = false;
         this.list = response.data.list;
         this.total = response.data.total;
-      });
-    },
-    handleShowUpperLevel() {
-      this.$router.back();
-    },
-    handleUpdateEquipmentCategory(index, row) {
-      this.$router.push({
-        path: "/info/updateEquipmentCate",
-        query: { id: row.id },
-      });
-    },
-    handleDeleteEquipmentCategory(index, row) {
-      this.$confirm("是否要进行删除操作?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        deleteEquipmentCategory(row.id).then((response) => {
-          this.$message({
-            message: "删除成功",
-            type: "success",
-            duration: 1000,
-          });
-          this.getList();
-        });
       });
     },
   },

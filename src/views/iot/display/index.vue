@@ -14,7 +14,7 @@
                         <!-- <div class="icon"><i class="el-icon-grape"></i></div> -->
                         <div class="icon"><svg-icon icon-class="monitor" class="color-main"></svg-icon></div>
                         <div class="info">
-                            <h3>10</h3>
+                            <h3>{{ factorNum }}</h3>
                             <span>监测信息</span>
                         </div>
                     </li>
@@ -22,7 +22,7 @@
                         <!-- <div class="icon"><i class="el-icon-refrigerator"></i></div> -->
                         <div class="icon"><svg-icon icon-class="alert" class="color-main"></svg-icon></div>
                         <div class="info">
-                            <h3>10</h3>
+                            <h3>{{ alertNum }}</h3>
                             <span>警告信息</span>
                         </div>
                     </li>
@@ -31,48 +31,24 @@
         </div>
         <div class="content">
           <span class="content-text">监测数据</span>
-          <el-select class="select-monitor-type" v-model="monitorTypeSelected">
+          <el-select class="select-monitor-type" v-model="factorSelected" @change="changeFactorType()">
             <el-option
-              key="all"
-              label="全部类型"
-              value="all">
-            </el-option>
-            <el-option
-              key="1"
-              label="HP"
-              value="1">
-            </el-option>
-            <el-option
-              key="2"
-              label="温度"
-              value="2">
+            v-for="item of factorTypeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
             </el-option>
           </el-select>
           <el-row :gutter="12" style="margin: 20px 0 20px 0">
-            <el-col :span="4">
-              <el-card shadow="always">
-                <div @click="handleViewData()" class="card-hover">
-                  <div class="card-content-item">43.33℃</div>
-                  <div class="card-content-item">CPU温度 122168720202</div>
-                  <div class="card-content-item">区块1</div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="4">
-              <el-card shadow="always">
-                <div @click="handleViewData()" class="card-hover">
-                  <div class="card-content-item">43.33℃</div>
-                  <div class="card-content-item">CPU温度 122168720202</div>
-                  <div class="card-content-item">区块1</div>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="4">
-              <el-card shadow="always">
-                <div @click="handleViewData()" class="card-hover">
-                  <div class="card-content-item">43.33℃</div>
-                  <div class="card-content-item">CPU温度 122168720202</div>
-                  <div class="card-content-item">区块1</div>
+            <el-col :span="4" v-for="item of factorList" :key="item.factorId">
+              <el-card shadow="always" style="margin-bottom:20px;">
+                <div class="card-hover">
+                  <div class="card-icon"><svg-icon :icon-class="getIcon(item.factorName)" class="color-main"></svg-icon></div>
+                  <div class="card-content-item">
+                    <strong class="card-num">{{item.value}}</strong>{{item.unit}}
+                  </div>
+                  <div class="card-content-item">{{item.factorName}} {{item.deviceAddr}}</div>
+                  <div class="card-content-item">所在区块：{{item.blockName}}</div>
                 </div>
               </el-card>
             </el-col>
@@ -83,13 +59,9 @@
 
 <script>
   import BlockSelect from './../../info/block/components/BlockSelect';
+  import { getDeviceRealtimeList } from '@/api/device';
+  import { fetchList } from '@/api/deviceFactor';
 
-  const defaultListQuery = {
-    pageNum: 1,
-    pageSize: 10,
-    name: null,
-    blockId: null,
-  };
   export default {
     name: "display",
     components:{BlockSelect},
@@ -99,40 +71,124 @@
       return {
         activeName: 'first',
         blockSelected: 'all',
-        monitorTypeSelected: 'all',
-        tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
+        factorSelected: '全部类型',
+        factorList: [],
+        allFactorList: [],
+        factorTypeList: [],
+        factorNum: 0,
+        alertNum: 0,
+        realtimeFactorInfo: null,
+        offlineDeviceList: [],
       }
     },
     created() {
+      this.getDeviceRealtimeData();
     },
     computed:{
     },
     methods: {
       getBlock(block) {
           if (block) {
-            this.listQuery.blockId = block.id;
+            this.blockSelected = block.id;
           } else {
-            this.listQuery.blockId = null;
+            this.blockSelected = null;
           }
+          this.changeFactorType()
       },
-      handleViewData() {
-
+      getDeviceRealtimeData() {
+        getDeviceRealtimeList().then((response) => {
+          console.log(response.data)
+          let offlineDeviceList = []
+          let realtimeFactorInfo = {}
+          for (let item of response.data) {
+            let deviceName = item.deviceName
+            if (item.deviceStatus == 'offline' || item.dataItem == null) {
+              offlineDeviceList.push(deviceName)
+            } else {
+              for (let subItem of item.dataItem) {
+                let nodeId = subItem.nodeId
+                for (let subItem2 of subItem.registerItem) {
+                  let registerId = subItem2.registerId
+                  realtimeFactorInfo[deviceName + '_' + nodeId + '_' + registerId] = subItem2.value
+                }
+              }
+            }
+          }
+          this.offlineDeviceList = offlineDeviceList
+          this.realtimeFactorInfo = realtimeFactorInfo
+          this.getFactorList()
+        });
+      },
+      getFactorList() {
+        fetchList({pageNum: 1, pageSize: 100000}).then((response) => {
+          this.factorList = response.data.list;
+          this.factorNum = response.data.total;
+          let factorTypeList = [{value: '全部类型', label: '全部类型'}]
+          let factorNameList = [];
+          for (let item of this.factorList) {
+            let factorName = item.factorName.toLocaleUpperCase()
+            let factorId = item.factorId
+            if (factorNameList.indexOf(factorName) == -1) {
+              factorNameList.push(factorName)
+              factorTypeList.push({value: item.factorName, label: factorName})
+            }
+            if (this.offlineDeviceList.indexOf(item.deviceAddr) > -1) {
+              item['value'] = '离线'
+            } else {
+              if (Object.keys(this.realtimeFactorInfo).indexOf(factorId) > -1) {
+                item['value'] = this.realtimeFactorInfo[factorId]
+              } else {
+                item['value'] = '离线'
+              }
+            }
+          }
+          // Object.assign(this.allFactorList, this.factorList)
+          this.allFactorList = JSON.parse(JSON.stringify(this.factorList));
+          this.factorTypeList = factorTypeList;
+          this.changeFactorType()
+        });
+      },
+      getIcon(factorName) {
+        let icon = 'monitor';
+        if (factorName == '溶解氧') {
+          icon = '溶解氧';
+        } else if (factorName == '水温') {
+          icon = '水温计';
+        } else if (factorName == 'PH' || factorName == 'ph') {
+          icon = 'pH值';
+        } else if (factorName == '温度') {
+          icon = '温度';
+        } else if (factorName == '湿度') {
+          icon = '湿度';
+        }
+        return icon
+      },
+      changeFactorType() {
+        debugger
+        let newFactorList = []
+        for (let item of this.allFactorList) { 
+          let factorFlag = false
+          if (this.factorSelected && this.factorSelected != '全部类型') {
+            let factorName = item.factorName.toLocaleUpperCase()
+            if (factorName == this.factorSelected) {
+              factorFlag = true
+            }
+          } else {
+            factorFlag = true
+          }
+          let blockFlag = false
+          if (this.blockSelected && this.blockSelected != 'all') {
+            if (item.blockId == this.blockSelected) {
+              blockFlag = true
+            }
+          } else {
+            blockFlag = true
+          }
+          if (blockFlag && factorFlag) {
+            newFactorList.push(item)
+          }
+        }
+        this.factorList = newFactorList
       }
     }
   }
@@ -209,8 +265,17 @@
 .content {
     margin-top:20px;
 }
+.card-icon {
+  font-size: 22px;
+  float: left;
+}
+.card-num {
+  font-size:24px;
+  margin-right:5px
+}
 .card-content-item {
   font-size: 14px;
   margin-bottom: 10px;
+  margin-left: 36px;
 }
 </style>
