@@ -81,6 +81,26 @@ export const asyncRouterMap = [
         meta: {title: '监控预警', icon: 'product-list'}
       },
       {
+        path: 'alarmRule',
+        name: 'alarmRule',
+        component: () => import('@/views/iot/alarmRule/index'),
+        meta: {title: '告警规则', icon: 'product-list'}
+      },
+      {
+        path: 'addAlarmRule',
+        name: 'addAlarmRule',
+        component: () => import('@/views/iot/alarmRule/add'),
+        meta: {title: '新增告警规则'},
+        hidden: true
+      },
+      {
+        path: 'updateAlarmRule',
+        name: 'updateAlarmRule',
+        component: () => import('@/views/iot/alarmRule/update'),
+        meta: {title: '编辑告警规则'},
+        hidden: true
+      },
+      {
         path: 'video',
         name: 'video',
         component: () => import('@/views/iot/video/index'),

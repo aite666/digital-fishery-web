@@ -2,10 +2,10 @@
   <el-menu class="navbar" mode="horizontal">
     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     <breadcrumb></breadcrumb>
-    <div class="header-alert">
+    <div class="header-alert" @click="handleViewAlertRecord()">
       <svg-icon icon-class="monitor" class="color-main"></svg-icon>
       <span>告警</span>
-      <span class="num">99+</span>
+      <span class="num">{{alarmCount > 99 ? '99+': alarmCount}}</span>
     </div>
     <el-divider class="right-divider" direction="vertical"></el-divider>
     <el-dropdown class="bigscreen-container" trigger="click">
@@ -49,6 +49,8 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { getCount } from "@/api/alarm";
+
 
 export default {
   components: {
@@ -58,8 +60,17 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'userId'
     ])
+  },
+  data() {
+    return {
+      alarmCount: 0
+    }
+  },
+  created() {
+    this.getAlarmCount();
   },
   methods: {
     toggleSideBar() {
@@ -82,6 +93,19 @@ export default {
       if (url) {
         window.open(url, "_blank");
       }
+    },
+    handleViewAlertRecord() {
+      this.$router.push({path: '/iot/monitor'});
+    },
+    getAlarmCount() {
+      console.log(this.userId)
+      let params = {'userId': this.userId}
+      getCount(params).then((response) => {
+        console.log(response)
+        if (response.code == 200) {
+          this.alarmCount = response.data
+        }
+      })
     }
   }
 }
@@ -132,6 +156,7 @@ export default {
     position: absolute;
     right: 275px;
     color: #606266;
+    cursor: pointer;
     font-size: 14px;
     .num {
       position: absolute;

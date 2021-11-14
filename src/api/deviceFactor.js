@@ -7,6 +7,14 @@ export function fetchList(params) {
   })
 }
 
+export function fetchDeviceFactorList(params) {
+  return request({
+    url:'/deviceFactor/list',
+    method:'get',
+    params:params
+  })
+}
+
 export function createDeviceFactor(data) {
   return request({
     url:'/deviceFactor/create',
