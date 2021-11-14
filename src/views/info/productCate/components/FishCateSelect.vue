@@ -34,6 +34,11 @@
             this.productCateId = this.productCateSelectedId;
             this.getList();
         },
+        watch: {
+            productCateSelectedId (newV, oldV) {
+                this.productCateId = newV
+            }
+        },
         methods: {
             handleResetSearch() {
                 this.listQuery = Object.assign({}, defaultListQuery);

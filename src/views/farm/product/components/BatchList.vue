@@ -10,11 +10,13 @@
     <el-button
         type="primary"
         style="float:right;"
+        v-if="!onlyView"
         @click="handleOutBatch()">出塘
     </el-button>
     <el-button
         type="primary"
         style="float:right;"
+        v-if="!onlyView"
         @click="handleUseStorage()"
         >
         使用农资
@@ -61,7 +63,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="200" align="center" v-if="!onlyView">
           <template slot-scope="scope">
             <p style="margin-bottom: 4px;margin-top: 4px;">
               <el-button
@@ -124,6 +126,10 @@
         blockId: {
           type: Number,
           default: null
+        },
+        onlyView: {
+          type: Boolean,
+          default: false
         }
     },
     data() {

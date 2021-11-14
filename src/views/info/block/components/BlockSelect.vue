@@ -41,6 +41,11 @@
             this.blockId = this.blockSelectedId;
             this.getList();
         },
+        watch: {
+            blockSelectedId (newV, oldV) {
+                this.blockId = newV
+            }
+        },
         methods: {
             handleResetSearch() {
                 this.listQuery = Object.assign({}, defaultListQuery);

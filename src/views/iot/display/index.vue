@@ -164,7 +164,6 @@
         return icon
       },
       changeFactorType() {
-        debugger
         let newFactorList = []
         for (let item of this.allFactorList) { 
           let factorFlag = false

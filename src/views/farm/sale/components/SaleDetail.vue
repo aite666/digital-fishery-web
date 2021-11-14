@@ -10,7 +10,7 @@
         <block-select
           @block="getBlock"
           class="input-width"
-          :blockSelectedId="saleDetail.blockId"
+          :blockSelectedId.sync="saleDetail.blockId"
         ></block-select>
       </el-form-item>
       <el-form-item label="养殖品种名称：" prop="productCategoryName">

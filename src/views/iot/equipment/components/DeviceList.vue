@@ -8,14 +8,14 @@
     ></el-input>
     <el-button type="primary" @click="handleSearchList()"> 查询搜索 </el-button>
     <el-button
-      v-if="deviceType == '所有设备' || deviceType == '采集设备'"
+      v-if="deviceType == '所有设备' || deviceType == '采集设备' && !onlyView"
       type="primary"
       style="float: right"
       @click="handleRefresh()"
       >刷新
     </el-button>
     <el-button
-      v-if="deviceType == '所有设备' || deviceType != '采集设备'"
+      v-if="deviceType == '所有设备' || deviceType != '采集设备'  && !onlyView"
       type="primary"
       style="float: right"
       @click="handleAddDevice()"
@@ -90,7 +90,7 @@
         <el-table-column label="所在区块" align="center">
           <template slot-scope="scope">{{ scope.row.blockName }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="320" align="center">
+        <el-table-column label="操作" width="320" align="center" v-if="!onlyView">
           <template slot-scope="scope">
             <p
               style="margin-bottom: 4px; margin-top: 4px"
@@ -200,6 +200,10 @@ export default {
       type: String,
       default: null,
     },
+    onlyView: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

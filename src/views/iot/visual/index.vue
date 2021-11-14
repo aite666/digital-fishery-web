@@ -8,8 +8,10 @@
         map-style="amap://styles/whitesmoke"
         async
         :zoom.sync="zoom"
+        :pitch.sync="pitch"
         :center.sync="center"
         @hotspotclick="onHotspotClick"
+        view-mode="3D"
       >
         <amap-polygon
           ref="polygons"
@@ -216,7 +218,7 @@ export default {
       center: [119.615241, 30.611064],
       position: null,
       zoom: 17,
-      pitch: 45,
+      pitch: 0,
       // rotation: 15,
       mapType: 1,
       isFull: false,
@@ -267,7 +269,6 @@ export default {
   },
   watch: {
     activePolygon(val, valOld) {
-      debugger;
       if (val == null) {
         this.getDeviceNum(null);
         this.getProductCategoryStats(null);

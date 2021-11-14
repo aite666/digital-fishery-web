@@ -1,7 +1,7 @@
 <template>
   <el-card class="form-container" shadow="never">
     <el-form :model="inspectionDetail" :rules="rules" ref="inspectionForm" label-width="150px">
-      <el-form-item label="区域名称：" prop="name">
+      <el-form-item label="区块名称：" prop="name">
         <block-select @block="getBlock" :blockSelectedId="inspectionDetail.blockId"></block-select>
       </el-form-item>
       <el-form-item label="区试时间：">
@@ -58,7 +58,7 @@
   import {fetchList,createInspection,updateInspection,deleteInspection,getInspectionDetail} from '@/api/inspection'
 
   const defaultInspectionDetail= {
-    blockId: 0,
+    blockId: null,
     blockName: '',
     inspectionTime: '',
     productData: '',
@@ -105,6 +105,7 @@
       if (this.isEdit) {
         getInspectionDetail(this.$route.query.id).then(response => {
           this.inspectionDetail = response.data;
+          console.log(this.inspectionDetail)
         });
       } else {
         this.inspectionDetail = Object.assign({}, defaultInspectionDetail);
@@ -135,6 +136,8 @@
                   this.inspectionDetail.images += ',';
                 }
               }
+            } else {
+              this.inspectionDetail.images = newValue[0]
             }
           }
         }

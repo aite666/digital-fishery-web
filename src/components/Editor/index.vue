@@ -122,7 +122,6 @@ export default {
     },
 
     uploadSuccess(res, file) {
-      debugger
       // res为图片服务器返回的数据
       // 获取富文本组件实例
       let quill = this.$refs.myQuillEditor.quill;

@@ -84,5 +84,10 @@ export default {
   width: 100%;
 }
 </style>
-
+<style>
+.news-content p {
+  text-indent: 2em;
+  line-height: 1.5em;
+}
+</style>
 

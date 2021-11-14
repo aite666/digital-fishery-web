@@ -193,8 +193,10 @@ const defaultBatch = {
   productCategoryId: null,
   productCategoryName: null,
   farmTime: null,
+  origin: null,
   quantity: 0,
   unitPrice: 0,
+  unit: null,
   amount: 0,
   status: 1,
 };
