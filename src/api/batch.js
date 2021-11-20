@@ -7,6 +7,14 @@ export function fetchList(params) {
   })
 }
 
+export function getBatchList(params) {
+  return request({
+    url:'/batch/list',
+    method:'get',
+    params:params
+  })
+}
+
 export function createBatch(data) {
   return request({
     url:'/batch/create',

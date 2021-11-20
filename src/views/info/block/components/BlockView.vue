@@ -70,7 +70,7 @@
                   总批次数: {{ stat.batchCount }}
                 </div>
                 <div class="card-content-item">
-                  总量: {{ stat.batchTotal | formatBatchTotal }}
+                  总量: {{ stat.batchTotal }}
                 </div>
               </el-card>
             </el-col>
@@ -83,7 +83,7 @@
             :onlyView="onlyView"
           ></batch-list>
         </el-tab-pane>
-        <el-tab-pane label="管理员" name="fourth"> </el-tab-pane>
+        <!-- <el-tab-pane label="管理员" name="fourth"> </el-tab-pane> -->
       </el-tabs>
     </div>
   </el-card>
@@ -99,6 +99,7 @@ import {
 } from "@/api/block";
 import { getProductCategoryList } from "@/api/batch";
 import { getDeviceList } from "@/api/device";
+import { getAdminList } from "@/api/login";
 import DeviceList from "./../../../iot/equipment/components/DeviceList";
 import BatchList from "./../../../farm/product/components/BatchList";
 
@@ -134,6 +135,7 @@ export default {
     getBlockDetail() {
       getBlockDetail(this.blockSelectedId).then((response) => {
         this.blockViewDetail = response.data;
+        this.getAdminNum();
       });
     },
     getProductCategoryStats() {
@@ -157,6 +159,16 @@ export default {
       };
       getDeviceList(query).then((response) => {
         this.deviceNum = response.data.total;
+      });
+    },
+    getAdminNum() {
+      let query = {
+        pageNum: 1,
+        pageSize: 100000,
+        enterpriseId: this.blockViewDetail.enterpriseId,
+      };
+      getAdminList(query).then((response) => {
+        this.adminNum = response.data.total;
       });
     },
   },

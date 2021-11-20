@@ -5,6 +5,8 @@ const user = {
   state: {
     token: getToken(),
     userId: 0,
+    enterpriseId: -1,
+    blockIds: null,
     name: '',
     avatar: '',
     roles: []
@@ -16,6 +18,12 @@ const user = {
     },
     SET_USER_ID: (state, userId) => {
       state.userId = userId
+    },
+    SET_ENTERPRISE_ID: (state, enterpriseId) => {
+      state.enterpriseId = enterpriseId
+    },
+    SET_BLOCK_IDS: (state, blockIds) => {
+      state.blockIds = blockIds
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -56,6 +64,8 @@ const user = {
             reject('getInfo: roles must be a non-null array !')
           }
           commit('SET_USER_ID', data.userId)
+          commit('SET_ENTERPRISE_ID', data.enterpriseId)
+          commit('SET_BLOCK_IDS', data.blockIds)
           commit('SET_NAME', data.username)
           commit('SET_AVATAR', data.icon)
           resolve(response)

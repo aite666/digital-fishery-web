@@ -64,15 +64,9 @@
     <div class="heade d-f ai-c">
       <div class="d-f ai-c">
         <div class="area-select">
-          <el-select v-model="enterprise" placeholder="请选择">
-            <el-option
-              v-for="item in enterprises"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
+          <enterprise-select
+            @enterprise="getEnterprise"
+          ></enterprise-select>
         </div>
       </div>
       <div class="right-b d-f ai-c">
@@ -149,17 +143,35 @@
           <div class="device-statistic d-f">
             <div class="item">
               <h4 data-v-46f4e097="">养殖品种</h4>
-              <div class="num">0</div>
+              <div class="num">{{ todayFishNum }}</div>
             </div>
             <div class="item">
               <h4 data-v-46f4e097="">养殖批次</h4>
-              <div class="num">0</div>
+              <div class="num">{{ todayBatchNum }}</div>
             </div>
           </div>
         </div>
         <div class="water-log">
-          <div class="title title-second">区试巡检日志</div>
-          <div class="no-data">暂无数据</div>
+          <div class="title title-second">区试巡检日志（最近5天）</div>
+          <div class="no-data" v-if="inspectionList.length == 0">暂无数据</div>
+          <div v-if="inspectionList.length > 0" class="inspection-data">
+            <el-table
+              ref="infoInspectionTable"
+              :data="inspectionList"
+              style="width: 100%"
+            >
+              <el-table-column label="品种繁育指标数据" width="140">
+                <template slot-scope="scope">
+                  {{ scope.row.productData | formatProductData }}
+                </template>
+              </el-table-column>
+              <el-table-column label="区试时间">
+                <template slot-scope="scope">
+                  {{ scope.row.inspectionTime | formatInspectionTime }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
       </div>
     </div>
@@ -193,12 +205,17 @@ import {
   getBlockDetail,
 } from "@/api/block";
 import { getLiveWeather, getForecastWeather } from "@/api/weather";
-import { getProductCategoryList } from "@/api/batch";
+import { getProductCategoryList, getBatchList } from "@/api/batch";
 import { getDeviceList } from "@/api/device";
+import { getInspectionList } from "@/api/inspection";
+import { formatDate } from "@/utils/date";
+import EnterpriseSelect from "./../../info/enterprise/components/EnterpriseSelect";
+
 const defaultListQuery = {
   pageNum: 1,
   pageSize: 100000,
   name: null,
+  enterpriseId: null
 };
 const defaultPolygon = {
   id: null,
@@ -212,7 +229,7 @@ const defaultPolygon = {
 
 export default {
   name: "visual",
-  components: {},
+  components: {EnterpriseSelect},
   data() {
     return {
       center: [119.615241, 30.611064],
@@ -226,17 +243,6 @@ export default {
       hawkeye: {
         isOpen: true,
       },
-      enterprise: null,
-      enterprises: [
-        {
-          value: "基地1",
-          label: "基地1",
-        },
-        {
-          value: "基地2",
-          label: "基地2",
-        },
-      ],
       path: [],
       editable: false,
       draggable: true,
@@ -259,6 +265,9 @@ export default {
       deviceNum: 0,
       productCategoryNum: 0,
       batchNum: 0,
+      todayFishNum: 0,
+      todayBatchNum: 0,
+      inspectionList: [],
     };
   },
   created() {
@@ -266,15 +275,34 @@ export default {
     this.getWeather();
     this.getProductCategoryStats(null);
     this.getDeviceNum(null);
+    this.getTodayNum(null);
+    this.getInspectionList(null);
+  },
+  filters: {
+    formatInspectionTime(time) {
+      let date = new Date(time);
+      return formatDate(date, "yyyyMMdd");
+    },
+    formatProductData(content) {
+      if (content.length > 50) {
+        return content.substr(0, 50) + "...";
+      } else {
+        return content;
+      }
+    },
   },
   watch: {
     activePolygon(val, valOld) {
       if (val == null) {
         this.getDeviceNum(null);
         this.getProductCategoryStats(null);
+        this.getTodayNum(null);
+        this.getInspectionList(null);
       } else {
         this.getDeviceNum(val.id);
         this.getProductCategoryStats(val.id);
+        this.getTodayNum(val.id);
+        this.getInspectionList(val.id);
       }
     },
   },
@@ -285,6 +313,14 @@ export default {
     },
   },
   methods: {
+    getEnterprise(enterprise) {
+      if (enterprise && enterprise.id != -1) {
+        this.listQuery.enterpriseId = enterprise.id
+      } else {
+        this.listQuery.enterpriseId = null
+      }
+      this.getList()
+    },
     getList() {
       fetchList(this.listQuery).then((response) => {
         this.blockList = response.data.list;
@@ -388,6 +424,36 @@ export default {
       };
       getDeviceList(query).then((response) => {
         this.deviceNum = response.data.total;
+      });
+    },
+    getTodayNum(blockId) {
+      let query = {
+        pageNum: 1,
+        pageSize: 100000,
+        blockId: blockId,
+        farmTime: formatDate(new Date(), "yyyy-MM-dd") + " 00:00:00",
+      };
+      getBatchList(query).then((response) => {
+        this.todayBatchNum = response.data.total;
+        let fishList = [];
+        for (let item of response.data.list) {
+          if (fishList.indexOf(item.productCategoryName)) {
+            fishList.push(item.productCategoryName);
+          }
+        }
+        this.todayFishNum = fishList.length;
+      });
+    },
+    getInspectionList(blockId) {
+      let query = {
+        pageNum: 1,
+        pageSize: 5,
+        blockId: blockId,
+        startTime: formatDate(new Date(new Date().getTime() - 3600 * 1000 * 24 * 5), "yyyy-MM-dd") + " 00:00:00",
+        endTime: formatDate(new Date(), "yyyy-MM-dd") + " 23:59:59",
+      };
+      getInspectionList(query).then((response) => {
+        this.inspectionList = response.data.list;
       });
     },
   },
@@ -544,6 +610,10 @@ export default {
   margin-top: 24px;
   text-align: center;
   color: rgb(192, 196, 204);
+  font-size: 14px;
+}
+side-card .water-log .inspection-data {
+  margin-top: 24px;
   font-size: 14px;
 }
 .contain .color-desc {

@@ -7,6 +7,14 @@ export function fetchList(params) {
   })
 }
 
+export function getInspectionList(params) {
+  return request({
+    url:'/inspection/list',
+    method:'get',
+    params:params
+  })
+}
+
 export function createInspection(data) {
   return request({
     url:'/inspection/create',

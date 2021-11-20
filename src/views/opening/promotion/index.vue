@@ -114,7 +114,7 @@
           >
         </div>
       </div>
-      <div class="deathLine">技术支持：XXXX 粤ICP备：18000000号</div>
+      <!-- <div class="deathLine">技术支持：XXXX 粤ICP备：18000000号</div> -->
     </div>
   </div>
 </template>

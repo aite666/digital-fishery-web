@@ -33,6 +33,14 @@ export function fetchList(params) {
   })
 }
 
+export function getAdminList(params) {
+  return request({
+    url: '/admin/list',
+    method: 'get',
+    params: params
+  })
+}
+
 export function createAdmin(data) {
   return request({
     url: '/admin/register',

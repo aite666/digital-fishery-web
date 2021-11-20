@@ -9,6 +9,12 @@
       <el-form-item label="区块名称：" prop="name">
         <el-input v-model="blockDetail.name"></el-input>
       </el-form-item>
+      <el-form-item label="公司：" prop="enterprise">
+        <enterprise-select
+            @enterprise="getEnterprise"
+            :enterpriseSelectedId="blockDetail.enterpriseId"
+        ></enterprise-select>
+      </el-form-item>
       <el-form-item label="描述：" prop="description">
         <el-input
           :autosize="{ minRows: 6 }"
@@ -19,6 +25,7 @@
       </el-form-item>
       <el-form-item label="面积：" prop="area">
         <el-input-number
+          disabled
           v-model="blockDetail.area"
           :min="0"
           :max="100000000000000000"
@@ -46,14 +53,17 @@ import {
   deleteBlock,
   getBlockDetail,
 } from "@/api/block";
+import EnterpriseSelect from "./../../enterprise/components/EnterpriseSelect";
 
 const defaultBlockDetail = {
   name: "",
   description: "",
+  enterpriseId: null,
   area: 0,
 };
 export default {
   name: "BlockDetail",
+  components: { EnterpriseSelect },
   props: {
     isEdit: {
       type: Boolean,
@@ -95,6 +105,13 @@ export default {
   },
   computed: {},
   methods: {
+    getEnterprise(enterprise) {
+      if (enterprise) {
+        this.blockDetail.enterpriseId = enterprise.id;
+      } else {
+        this.blockDetail.enterpriseId = null;
+      }
+    },
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {

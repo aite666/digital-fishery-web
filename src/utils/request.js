@@ -14,6 +14,21 @@ service.interceptors.request.use(config => {
   if (store.getters.token) {
     config.headers['Authorization'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   }
+  if (store.getters.blockIds) {
+    // 注意：config.method 的判断值必须是小写的post和get
+    // if (config.method === 'post') {
+    //   config.data = {
+    //     blockIds: store.getters.blockIds,
+    //     ...config.data
+    //   }
+    // }
+    if (config.method === 'get') {
+      config.params = {
+        blockIds: store.getters.blockIds,
+        ...config.params
+      }
+    }
+  }
   return config
 }, error => {
   // Do something with request error

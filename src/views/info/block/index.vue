@@ -21,9 +21,12 @@
             </div>
             <div @click="handleViewBlock(item.id)" class="card-hover">
               <div class="card-content-item">介绍：{{ item.description }}</div>
+              <div class="card-content-item">公司：{{ item.enterpriseName }}</div>
               <div class="card-content-item">面积：{{ item.area }}亩</div>
-              <div class="card-content-item">养殖品种：鱼</div>
-              <div class="card-content-item">养殖批次：123</div>
+              <div class="card-content-item">养殖品种：
+                <el-tag class="fish" v-for="fish in item.fishList" :key="fish">{{ fish }}</el-tag>
+              </div>
+              <div class="card-content-item">养殖批次数：{{ item.batchNum }}</div>
             </div>
           </el-card>
         </el-col>
@@ -45,6 +48,9 @@
 </template>
 <script>
   import {fetchList, deleteBlock} from '@/api/block';
+  import {
+    getProductCategoryList,
+  } from "@/api/batch";
 
   const defaultListQuery = {
     pageNum: 1,
@@ -60,6 +66,7 @@
         listLoading: true,
         list: null,
         total: null,
+        fishInfo: {}
       }
     },
     created() {
@@ -92,9 +99,27 @@
         this.listLoading = true;
         fetchList(this.listQuery).then(response => {
           this.listLoading = false;
-          this.list = response.data.list;
+          let list = response.data.list;
+          this.getProductCategoryStats(list)
           this.total = response.data.total;
         });
+      },
+      async getProductCategoryStats(list) {
+        for (let i=0; i<list.length; i++){
+          await getProductCategoryList(list[i].id).then((response) => {
+            let productCategoryStats = response.data;
+            let fishList = [];
+            let batchNum = 0;
+            for (let item of productCategoryStats) {
+              fishList.push(item['productCategoryName'])
+              batchNum += item["batchCount"];
+            }
+            list[i]['fishList'] = fishList
+            list[i]['batchNum'] = batchNum
+          });
+        }
+        console.log(list)
+        this.list = list
       },
       handleUpdateBlock(rowId) {
         this.$router.push({path:'/info/updateBlock',query:{id:rowId}});
@@ -161,6 +186,9 @@
 .card-content-item {
   font-size: 14px;
   margin-bottom: 10px;
+}
+.fish {
+  margin: 0 5px;
 }
 </style>
 
