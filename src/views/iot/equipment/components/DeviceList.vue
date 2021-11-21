@@ -90,7 +90,7 @@
         <el-table-column label="所在区块" align="center">
           <template slot-scope="scope">{{ scope.row.blockName }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="320" align="center" v-if="!onlyView">
+        <el-table-column label="操作" width="300" align="center" v-if="!onlyView">
           <template slot-scope="scope">
             <p
               style="margin-bottom: 4px; margin-top: 4px"
@@ -100,11 +100,10 @@
                 size="mini"
                 type="primary"
                 @click="handleBindBlock(scope.$index, scope.row)"
-                >绑定区块
+                >编辑
               </el-button>
               <el-button
                 size="mini"
-                type="primary"
                 @click="handleViewFactor(scope.$index, scope.row)"
                 >因子信息
               </el-button>
@@ -154,13 +153,16 @@
       </el-pagination>
     </div>
     <el-dialog
-      :title="'绑定区块'"
+      :title="'编辑设备信息'"
       :visible.sync="dialogVisible"
       width="40%"
     >
       <el-form :model="deviceInfo" ref="bindBlockForm" label-width="150px" size="small">
         <el-form-item label="设备名称：">
-          <el-input v-model="deviceInfo.deviceName" class="input-width" disabled></el-input>
+          <el-input v-model="deviceInfo.deviceName" class="input-width"></el-input>
+        </el-form-item>
+        <el-form-item label="设备地址码：">
+          <el-input v-model="deviceInfo.deviceAddr" class="input-width" disabled></el-input>
         </el-form-item>
         <el-form-item label="区块名称：">
           <block-select @block="getBlock" class="input-width" :blockSelectedId="deviceInfo.blockId"></block-select>
@@ -213,7 +215,9 @@ export default {
       total: null,
       dialogVisible: false,
       deviceInfo: {
+        id: null,
         deviceName: null,
+        deviceAddr: null,
         blockId: null,
       },
     };
@@ -298,7 +302,12 @@ export default {
     },
     handleBindBlock(index, row) {
       this.dialogVisible = true;
-      this.deviceInfo = row;
+      this.deviceInfo = {
+        id: row.id,
+        deviceName: row.deviceName,
+        deviceAddr: row.deviceAddr,
+        blockId: row.blockId,
+      };
     },
     handleViewFactor(index, row) {
       this.$router.push({ path: "/iot/deviceFactor", query: {deviceAddr: row.deviceAddr} });

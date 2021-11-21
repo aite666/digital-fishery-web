@@ -91,7 +91,13 @@
                   >{{ item.unit }}
                 </div>
                 <div class="card-content-item">
-                  {{ item.factorName }} {{ item.deviceAddr }}
+                  {{ item.factorName }}
+                </div>
+                <div class="card-content-item">
+                  设备名称：{{ item.deviceName }}
+                </div>
+                <div class="card-content-item">
+                  设备地址码：{{ item.deviceAddr }}
                 </div>
                 <div class="card-content-item">
                   所在区块：{{ item.blockName }}
@@ -209,6 +215,7 @@ export default {
           let deviceData = {};
           for (let item of response.data) {
             let deviceAddr = item.deviceAddr;
+            let deviceName = item.deviceName;
             let nodeId = item.nodeId;
             let blockId = item.blockId;
             let blockName = item.blockName;
@@ -229,6 +236,7 @@ export default {
                 deviceData[dataKey] = {
                   dataKey: dataKey,
                   deviceAddr: deviceAddr,
+                  deviceName: deviceName,
                   nodeId: nodeId,
                   registerId: registerId,
                   registerName: registerName,
@@ -358,12 +366,12 @@ export default {
       }
       this.charts[dataKey].setOption({
         title: {
-          text: data.registerName + " " + data.deviceAddr,
+          text: data.registerName,
           textStyle: {
             fontWeight: "bolder", //标题颜色
             color: "#408829",
           },
-          subtext: data.blockName,
+          subtext: data.blockName + " " + data.deviceName + " " + data.deviceAddr,
           left: "center",
         },
         color: ["#2db7f5"],
