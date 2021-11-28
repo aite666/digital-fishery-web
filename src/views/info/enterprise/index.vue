@@ -160,7 +160,7 @@ export default {
       this.getList();
     },
     handleAddEnterprise() {
-      this.$router.push({ path: "/info/addEnterprisesss" });
+      this.$router.push({ path: "/info/addEnterprise" });
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;

@@ -8,14 +8,14 @@
     ></el-input>
     <el-button type="primary" @click="handleSearchList()"> 查询搜索 </el-button>
     <el-button
-      v-if="deviceType == '所有设备' || deviceType == '采集设备' && !onlyView"
+      v-if="deviceType == '所有设备' || (deviceType == '采集设备' && !onlyView)"
       type="primary"
       style="float: right"
       @click="handleRefresh()"
       >刷新
     </el-button>
     <el-button
-      v-if="deviceType == '所有设备' || deviceType != '采集设备'  && !onlyView"
+      v-if="deviceType == '所有设备' || (deviceType != '采集设备' && !onlyView)"
       type="primary"
       style="float: right"
       @click="handleAddDevice()"
@@ -36,7 +36,11 @@
         <el-table-column label="设备地址码" align="center">
           <template slot-scope="scope">{{ scope.row.deviceAddr }}</template>
         </el-table-column>
-        <el-table-column label="设备类型" align="center" v-if="deviceType == '所有设备'">
+        <el-table-column
+          label="设备类型"
+          align="center"
+          v-if="deviceType == '所有设备'"
+        >
           <template slot-scope="scope">{{ scope.row.deviceType }}</template>
         </el-table-column>
         <el-table-column
@@ -85,12 +89,19 @@
           >
         </el-table-column>
         <el-table-column label="状态" align="center">
-          <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
+          <template slot-scope="scope">{{
+            scope.row.status | formatStatus
+          }}</template>
         </el-table-column>
         <el-table-column label="所在区块" align="center">
           <template slot-scope="scope">{{ scope.row.blockName }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="300" align="center" v-if="!onlyView">
+        <el-table-column
+          label="操作"
+          width="300"
+          align="center"
+          v-if="!onlyView"
+        >
           <template slot-scope="scope">
             <p
               style="margin-bottom: 4px; margin-top: 4px"
@@ -99,7 +110,7 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="handleBindBlock(scope.$index, scope.row)"
+                @click="handleUpdateDevice(scope.$index, scope.row)"
                 >编辑
               </el-button>
               <el-button
@@ -120,11 +131,6 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="handleBindBlock(scope.$index, scope.row)"
-                >绑定区块
-              </el-button>
-              <el-button
-                size="mini"
                 @click="handleUpdateDevice(scope.$index, scope.row)"
                 >编辑
               </el-button>
@@ -153,19 +159,47 @@
       </el-pagination>
     </div>
     <el-dialog
-      :title="'编辑设备信息'"
+      :title="isEdit ? '编辑设备信息' : '新增设备信息'"
       :visible.sync="dialogVisible"
-      width="40%"
+      width="30%"
     >
-      <el-form :model="deviceInfo" ref="bindBlockForm" label-width="150px" size="small">
+      <el-form
+        :model="deviceInfo"
+        ref="bindBlockForm"
+        label-width="150px"
+        size="small"
+      >
         <el-form-item label="设备名称：">
-          <el-input v-model="deviceInfo.deviceName" class="input-width"></el-input>
+          <el-input v-model="deviceInfo.deviceName" class="input-width">
+          </el-input>
         </el-form-item>
         <el-form-item label="设备地址码：">
-          <el-input v-model="deviceInfo.deviceAddr" class="input-width" disabled></el-input>
+          <el-input
+            v-model="deviceInfo.deviceAddr"
+            class="input-width"
+            :disabled="deviceInfo.deviceType == '采集设备'"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="设备类型："
+          v-if="deviceInfo.deviceType != '采集设备'"
+        >
+          <equipment-cate-select
+            @equipment-cate="getEquipmentCate"
+            class="input-width"
+            :checkDeviceFlag="checkDeviceFlag"
+            :equipmentCateSelectedName="deviceInfo.deviceType"
+          >
+          </equipment-cate-select>
         </el-form-item>
         <el-form-item label="区块名称：">
-          <block-select @block="getBlock" class="input-width" :blockSelectedId="deviceInfo.blockId"></block-select>
+          <block-select
+            @block="getBlock"
+            class="input-width"
+            :blockSelectedId="deviceInfo.blockId"
+          >
+          </block-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -178,9 +212,15 @@
   </div>
 </template>
 <script>
-import { fetchList, updateDevice } from "@/api/device";
+import {
+  fetchList,
+  updateDevice,
+  createDevice,
+  refeashDevice,
+} from "@/api/device";
 import { formatDate } from "@/utils/date";
 import BlockSelect from "./../../../info/block/components/BlockSelect";
+import EquipmentCateSelect from "./../../../info/equipmentCate/components/EquipmentCateSelect";
 
 const defaultListQuery = {
   pageNum: 1,
@@ -192,7 +232,7 @@ const defaultListQuery = {
 };
 export default {
   name: "DeviceList",
-  components: { BlockSelect },
+  components: { BlockSelect, EquipmentCateSelect },
   props: {
     blockId: {
       type: Number,
@@ -204,8 +244,8 @@ export default {
     },
     onlyView: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -214,6 +254,8 @@ export default {
       list: null,
       total: null,
       dialogVisible: false,
+      isEdit: false,
+      checkDeviceFlag: false,
       deviceInfo: {
         id: null,
         deviceName: null,
@@ -265,7 +307,18 @@ export default {
   },
   methods: {
     getBlock(block) {
-      this.deviceInfo.blockId = block.id;
+      if (block) {
+        this.deviceInfo.blockId = block.id;
+      } else {
+        this.deviceInfo.blockId = null;
+      }
+    },
+    getEquipmentCate(equipmentCate) {
+      if (equipmentCate) {
+        this.deviceInfo.deviceType = equipmentCate.name;
+      } else {
+        this.deviceInfo.deviceType = null;
+      }
     },
     handleResetSearch() {
       this.listQuery = Object.assign({}, defaultListQuery);
@@ -300,24 +353,32 @@ export default {
         this.total = response.data.total;
       });
     },
-    handleBindBlock(index, row) {
+    handleUpdateDevice(index, row) {
       this.dialogVisible = true;
+      this.isEdit = true;
       this.deviceInfo = {
         id: row.id,
         deviceName: row.deviceName,
         deviceAddr: row.deviceAddr,
+        deviceType: row.deviceType,
         blockId: row.blockId,
       };
     },
     handleViewFactor(index, row) {
-      this.$router.push({ path: "/iot/deviceFactor", query: {deviceAddr: row.deviceAddr} });
+      this.$router.push({
+        path: "/iot/deviceFactor",
+        query: { deviceAddr: row.deviceAddr },
+      });
     },
     handleViewRelay(index, row) {
-      this.$router.push({ path: "/iot/deviceRelay", query: {deviceAddr: row.deviceAddr} });
+      this.$router.push({
+        path: "/iot/deviceRelay",
+        query: { deviceAddr: row.deviceAddr },
+      });
     },
-    handleUpdateDevice(index, row) {
-      this.$emit("update-batch", index, row);
-    },
+    // handleUpdateDevice(index, row) {
+    //   this.$emit("update-batch", index, row);
+    // },
     handleDeleteDevice(index, row) {
       this.$confirm("是否要进行删除操作?", "提示", {
         confirmButtonText: "确定",
@@ -329,6 +390,33 @@ export default {
             message: "删除成功",
             type: "success",
             duration: 1000,
+          });
+          this.getList();
+          this.$emit("getAllList");
+        });
+      });
+    },
+    handleAddDevice() {
+      this.dialogVisible = true;
+      this.isEdit = false;
+      this.deviceInfo = {
+        deviceName: null,
+        deviceAddr: null,
+        deviceType: null,
+        blockId: null,
+      };
+    },
+    handleRefresh() {
+      this.$confirm("是否要进行刷新操作?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        refeashDevice().then((response) => {
+          this.$message({
+            message: "刷新成功",
+            type: "success",
+            duration: 2000,
           });
           this.getList();
           this.$emit("getAllList");
@@ -348,17 +436,29 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        updateDevice(this.deviceInfo.id, this.deviceInfo).then((response) => {
-          this.$message({
-            message: "修改成功！",
-            type: "success",
+        if (this.isEdit) {
+          updateDevice(this.deviceInfo.id, this.deviceInfo).then((response) => {
+            this.$message({
+              message: "修改成功！",
+              type: "success",
+            });
+            this.dialogVisible = false;
+            this.getList();
+            this.$emit("getAllList");
           });
-          this.dialogVisible = false;
-          this.getList();
-          this.$emit("getAllList");
-        });
+        } else {
+          createDevice(this.deviceInfo).then((response) => {
+            this.$message({
+              message: "新增成功！",
+              type: "success",
+            });
+            this.dialogVisible = false;
+            this.getList();
+            this.$emit("getAllList");
+          });
+        }
       });
-    }
+    },
   },
 };
 </script>

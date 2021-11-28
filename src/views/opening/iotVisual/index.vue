@@ -3,7 +3,7 @@
     <el-header>
       <div class="topBannerBox">
         <div class="navLeft">
-          <div class="title">基地1</div>
+          <div class="title">{{enterpriseName}}</div>
         </div>
         <div class="bannerMenu">
           <div class="baseOperation">
@@ -186,6 +186,9 @@ import {
   fetchAllDeviceList,
   updateDevice
 } from "@/api/device";
+import {
+  getEnterpriseDetail
+} from "@/api/enterprise";
 const defaultListQuery = {
   pageNum: 1,
   pageSize: 100000,
@@ -235,9 +238,14 @@ export default {
       freeDeviceList: [],
       dialogVisible: false,
       multipleSelection: [],
+      enterpriseName: '全部'
     };
   },
   created() {
+    console.log(this.$route.query.enterpriseId)
+    if (this.$route.query.enterpriseId) {
+      this.getEnterpriseDetail(this.$route.query.enterpriseId)
+    }
     this.getList();
     this.getAllDevice();
   },
@@ -287,6 +295,13 @@ export default {
     },
   },
   methods: {
+    getEnterpriseDetail(enterpriseId) {
+      getEnterpriseDetail(enterpriseId).then((response) => {
+        if (response.data) {
+          this.enterpriseName = response.data.name;
+        }
+      });
+    },
     getList() {
       fetchList(this.listQuery).then((response) => {
         this.blockList = response.data.list;

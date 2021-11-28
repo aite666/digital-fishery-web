@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { fetchList, deleteBlock } from "@/api/block";
+import { fetchList } from "@/api/block";
 
 const defaultListQuery = {
   pageNum: 1,

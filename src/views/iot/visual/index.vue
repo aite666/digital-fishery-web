@@ -353,6 +353,9 @@ export default {
     },
     handleUpdateMap() {
       let url = "/#/opening/iotVisual";
+      if (this.listQuery.enterpriseId) {
+        url = "/#/opening/iotVisual?enterpriseId=" + this.listQuery.enterpriseId;
+      }
       window.open(url, "_blank");
     },
     fullScreen() {

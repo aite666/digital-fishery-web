@@ -53,7 +53,6 @@ export function getDeviceNodeCharts(params) {
     });
 }
 
-
 export function getDeviceRealtimeList(params) {
     return request({
         url:'/device/realtime/list',
@@ -61,7 +60,6 @@ export function getDeviceRealtimeList(params) {
         params:params
     });
 }
-
 
 export function fetchAllDeviceList() {
     return request({
@@ -74,3 +72,9 @@ export function fetchAllDeviceList() {
     });
 }
 
+export function refeashDevice() {
+  return request({
+    url:'/device/refeash',
+    method:'get'
+  });
+}
