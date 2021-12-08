@@ -7,36 +7,66 @@
 <script>
 export default {
   name: 'ScrollBoard',
+  props: {
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  watch: {
+    dataList(val, valOld) {
+      this.createData();
+    },
+  },
   data () {
     return {
       config: {
-        header: ['时间', '养殖品种', '数量', '区块名称'],
-        data: [
-          ['2021-10-14 19:25:00', '青鱼', '500公斤', '区块1'],
-          ['2021-10-14 12:15:00', '鲤鱼', '2400公斤', '区块2'],
-          ['2021-10-14 08:23:00', '草鱼', '400公斤', '区块1'],
-          ['2021-10-14 07:23:00', '鲢鱼', '200公斤', '区块1'],
-          ['2021-10-14 06:12:00', '青鱼', '400公斤', '区块3'],
-          ['2021-10-13 21:45:00', '鳊鱼', '200公斤', '区块1'],
-          ['2021-10-13 14:25:00', '青鱼', '500公斤', '区块3'],
-          ['2021-10-13 11:30:00', '草鱼', '400公斤', '区块2'],
-          ['2021-10-13 08:12:00', '青鱼', '1300公斤', '区块1'],
-          ['2021-10-12 07:25:00', '青鱼', '120公斤', '区块1'],
-          ['2021-10-12 14:25:00', '鲤鱼', '1200公斤', '区块1'],
-          ['2021-10-12 11:45:00', '青鱼', '1500公斤', '区块2'],
-          ['2021-10-12 07:35:00', '鲢鱼', '2100公斤', '区块1'],
+        header: [
+          "检验检测项目、单位",
+          "检验检测方法",
+          "检测值",
+          "标准值",
+          "单项结论",
         ],
-        index: true,
-        columnWidth: [50, 200, 100, 100, 100],
-        align: ['center'],
-        rowNum: 7,
-        headerBGC: '#1981f6',
-        headerHeight: 45,
-        oddRowBGC: 'rgba(0, 44, 81, 0.8)',
-        evenRowBGC: 'rgba(10, 29, 50, 0.8)'
-      }
+        headerBGC: '#0199d1',
+        data: [
+          ["悬浮物，mg/L", "GB/T 11901-1989", "25.3", "≤80", "合格"],
+          ["总磷，mg/L", "GB/T 11893-1989", "0.16", "≤0.8", "合格"],
+          ["总氮，mg/L", "HJ 636-2012", "0.8", "≤4.0", "合格"],
+          ["高锰酸钾指数，mg/L", "GB/T 11892-1989", "4.34", "≤20", "合格"],
+          ["氨氮，mg/L", "HJ 535-2009 11901-1989", "0.092", "≤2.2", "合格"],
+        ],
+        columnWidth: [200, 200, 85, 85, 100],
+        index: false,
+        align: ["center"],
+        rowNum: 5,
+        oddRowBGC: "rgba(0, 44, 81, 0.8)",
+        evenRowBGC: "rgba(10, 29, 50, 0.8)",
+      },
     }
-  }
+  },
+  created() {
+    this.createData();
+  },
+  methods: {
+    createData() {
+      if (this.dataList.length > 0) {
+      let configData = [];
+        for (let i = 0; i < this.dataList.length; i++) {
+          let item = this.dataList[i];
+          configData.push([
+            item.testItem,
+            item.testMethod,
+            item.testValue,
+            item.standardValue,
+            item.singleConclusion,
+          ]);
+        }
+        this.config.data = configData;
+        this.config = Object.assign({}, this.config)
+      }
+    },
+  },
 }
 </script>
 

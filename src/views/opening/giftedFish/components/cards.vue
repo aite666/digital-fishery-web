@@ -1,6 +1,21 @@
 <template>
   <div id="cards">
-    <div
+    <div class="card-item">
+      <img class="image" :src="image1" />
+    </div>
+    <div class="card-item">
+      <img class="image" :src="image2" />
+    </div>
+    <div class="card-item">
+      <img class="image" :src="image3" />
+    </div>
+    <div class="card-item">
+      <img class="image" :src="image4" />
+    </div>
+    <!-- <div class="card-item">
+      <img class="image" :src="image5" />
+    </div> -->
+    <!-- <div
       class="card-item"
       v-for="(card, i) in cards"
       :key="card.title"
@@ -24,13 +39,35 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 export default {
   name: 'Cards',
+  props: {
+    image1: {
+      type: String,
+      default: '',
+    },
+    image2: {
+      type: String,
+      default: '',
+    },
+    image3: {
+      type: String,
+      default: '',
+    },
+    image4: {
+      type: String,
+      default: '',
+    },
+    // image5: {
+    //   type: String,
+    //   default: '',
+    // },
+  },
   data () {
     return {
       cards: []
@@ -126,9 +163,14 @@ export default {
   .card-item {
     background-color: rgba(6, 30, 93, 0.5);
     border-top: 2px solid rgba(1, 153, 209, .5);
-    width: 19%;
+    width: 24%;
     display: flex;
     flex-direction: column;
+
+    .image {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .card-header {

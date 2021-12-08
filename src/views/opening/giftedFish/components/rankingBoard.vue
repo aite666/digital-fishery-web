@@ -1,59 +1,60 @@
 <template>
   <div id="ranking-board">
-    <div class="ranking-board-title">区试巡查上报记录数量</div>
+    <div class="ranking-board-title">{{ title }}</div>
     <dv-scroll-ranking-board :config="config" />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'RankingBoard',
-  data () {
+  name: "RankingBoard",
+  props: {
+    title: {
+      type: String,
+      default: "销售鱼类数量",
+    },
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  data() {
     return {
       config: {
-        data: [
-          {
-            name: '检查水质',
-            value: 320
-          },
-          {
-            name: '检查温度',
-            value: 120
-          },
-          {
-            name: '检查水温',
-            value: 78
-          },
-          {
-            name: '检查湿度',
-            value: 66
-          },
-          {
-            name: '检查死鱼数量',
-            value: 80
-          },
-          {
-            name: '检查光照',
-            value: 45
-          },
-          {
-            name: '检查饲料情况',
-            value: 619
-          },
-          {
-            name: '检查化肥情况',
-            value: 430
-          },
-          {
-            name: '检查农药情况',
-            value: 339
-          }
-        ],
-        rowNum: 9
+        data: [],
+        rowNum: 0,
+      },
+    };
+  },
+  watch: {
+    dataList(val, valOld) {
+      this.createData();
+    },
+  },
+  created() {
+    console.log(this.dataList);
+    const { createData } = this;
+    setTimeout(() => {
+      createData();
+    }, 100)
+  },
+  methods: {
+    createData() {
+      let dataList = [];
+      for (let i = 0; i < this.dataList.length; i++) {
+        dataList.push({
+          name: this.dataList[i].name,
+          value: parseInt(this.dataList[i].value),
+        });
       }
-    }
-  }
-}
+      if (dataList.length > 0) {
+        this.config.data = dataList;
+        this.config.rowNum = dataList.length;
+        this.config = Object.assign({}, this.config);
+      }
+    },
+  },
+};
 </script>
 
 <style lang="less">
@@ -63,7 +64,7 @@ export default {
   display: flex;
   flex-direction: column;
   background-color: rgba(6, 30, 93, 0.5);
-  border-top: 2px solid rgba(1, 153, 209, .5);
+  border-top: 2px solid rgba(1, 153, 209, 0.5);
   box-sizing: border-box;
   padding: 0px 30px;
 

@@ -78,3 +78,11 @@ export function refeashDevice() {
     method:'get'
   });
 }
+
+export function getDeviceNodeDayCharts(params) {
+  return request({
+      url:'/device/dayCharts',
+      method:'get',
+      params:params
+  });
+}

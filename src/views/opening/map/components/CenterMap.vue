@@ -1,5 +1,5 @@
 <template>
-  <div class="contain p-32" ref="baseVideoBox">
+  <div class="contain" ref="baseVideoBox">
     <div class="map">
       <amap
         class="mapContainer"
@@ -12,6 +12,7 @@
         :center.sync="center"
         @hotspotclick="onHotspotClick"
         view-mode="3D"
+        :show-label="showLabel"
       >
         <amap-polygon
           ref="polygons"
@@ -35,144 +36,29 @@
           "
         >
         </amap-polygon>
-        <amap-satellite-layer :visible="satellite" />
-        <!-- <amap-marker
-          v-if="position"
-          :position.sync="position"
-          draggable
-          :label="{
-            content: positionText,
-          }"
-        /> -->
-        <!-- <amap-map-type :defaultType.sync="mapType" /> -->
-        <amap-control-bar
-          :position="{
-            top: '50px',
-            left: '10px',
-          }"
-        />
-        <!-- <amap-hawk-eye :isOpen.sync="hawkeye.isOpen" show-button /> -->
-        <amap-scale position="LB" />
-        <amap-tool-bar
-          :position="{
-            top: '160px',
-            left: '40px',
-          }"
-        />
+        <amap-satellite-layer :visible="satellite" :show-label="showLabel"/>
       </amap>
     </div>
-    <div class="heade d-f ai-c">
-      <div class="d-f ai-c">
-        <div class="area-select">
-          <enterprise-select
-            @enterprise="getEnterprise"
-          ></enterprise-select>
-        </div>
+    <div class="total-statistic d-f">
+      <div class="item" v-if="activePolygon === null">
+        <h4 data-v-46f4e097="">区块数</h4>
+        <div class="num">{{ polygonList.length }}</div>
       </div>
-      <div class="right-b d-f ai-c">
-        <el-button-group>
-          <el-button class="right-button" @click="handleUpdateMap()">
-            <i class="el-icon-edit" style="margin-right: 10px"></i
-            >编辑</el-button
-          >
-          <el-button class="right-button" v-if="!isFull" @click="fullScreen()">
-            <i class="el-icon-full-screen" style="margin-right: 0px"></i>
-            <span>全屏</span>
-          </el-button>
-          <el-button
-            class="right-button"
-            v-if="isFull"
-            @click="exitFullScreen()"
-          >
-            <i class="el-icon-full-screen" style="margin-right: 0px"></i>
-            <span>退出全屏</span>
-          </el-button>
-        </el-button-group>
+      <div class="item" v-if="activePolygon">
+        <h4 data-v-46f4e097="">面积(亩)</h4>
+        <div class="num">{{ activePolygon.blockArea }}</div>
       </div>
-    </div>
-    <div class="info-panel">
-      <div class="side-card">
-        <div class="title">
-          <span v-if="activePolygon === null">区域信息</span>
-          <span v-if="activePolygon">{{ activePolygon.blockName }}</span>
-        </div>
-        <div class="air" v-if="activePolygon === null">
-          <div class="temp">
-            <strong>{{ todayTemp }}</strong
-            >℃
-          </div>
-          <div class="RH d-f ai-c">
-            <span>{{ todayWeather }}</span>
-            相对湿度{{ todayHumidity }}%
-          </div>
-          <div class="future">
-            明天
-            <span>{{ tomorrowWeather }}</span>
-            {{ tomorrowNighttemp }}℃ / {{ tomorrowDaytemp }}℃
-          </div>
-          <div class="future">
-            后天
-            <span>{{ afterTomorrowWeather }}</span>
-            {{ afterTomorrowNighttemp }}℃ / {{ afterTomorrowDaytemp }}℃
-          </div>
-        </div>
-        <div class="device-statistic d-f">
-          <div class="item" v-if="activePolygon === null">
-            <h4>区块数</h4>
-            <div class="num">{{ polygonList.length }}</div>
-          </div>
-          <div class="item" v-if="activePolygon">
-            <h4>面积(亩)</h4>
-            <div class="num">{{ activePolygon.blockArea }}</div>
-          </div>
-          <div class="item">
-            <h4>监测设备</h4>
-            <div class="num">{{ deviceNum }}</div>
-          </div>
-          <div class="item">
-            <h4>养殖鱼类</h4>
-            <div class="num">{{ productCategoryNum }}</div>
-          </div>
-          <div class="item">
-            <h4>投放批次</h4>
-            <div class="num">{{ batchNum }}</div>
-          </div>
-        </div>
-        <div class="state-statistic">
-          <div class="title title-second">今日养殖</div>
-          <div class="device-statistic d-f">
-            <div class="item">
-              <h4>养殖品种</h4>
-              <div class="num">{{ todayFishNum }}</div>
-            </div>
-            <div class="item">
-              <h4>养殖批次</h4>
-              <div class="num">{{ todayBatchNum }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="water-log">
-          <div class="title title-second">区试巡检日志（最近5天）</div>
-          <div class="no-data" v-if="inspectionList.length == 0">暂无数据</div>
-          <div v-if="inspectionList.length > 0" class="inspection-data">
-            <el-table
-              ref="infoInspectionTable"
-              :data="inspectionList"
-              style="width: 100%"
-            >
-              <el-table-column label="品种繁育指标数据" width="140">
-                <template slot-scope="scope">
-                  {{ scope.row.productData | formatProductData }}
-                </template>
-              </el-table-column>
-              <el-table-column label="区试时间">
-                <template slot-scope="scope">
-                  {{ scope.row.inspectionTime | formatInspectionTime }}
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </div>
+      <div class="item">
+        <h4 data-v-46f4e097="">监测设备</h4>
+        <div class="num">{{ deviceNum }}</div>
+      </div>
+      <div class="item">
+        <h4 data-v-46f4e097="">养殖鱼类</h4>
+        <div class="num">{{ productCategoryNum }}</div>
+      </div>
+      <div class="item">
+        <h4 data-v-46f4e097="">投放批次</h4>
+        <div class="num">{{ batchNum }}</div>
       </div>
     </div>
     <div class="color-desc">
@@ -209,7 +95,6 @@ import { getProductCategoryList, getBatchList } from "@/api/batch";
 import { getDeviceList } from "@/api/device";
 import { getInspectionList } from "@/api/inspection";
 import { formatDate } from "@/utils/date";
-import EnterpriseSelect from "./../../info/enterprise/components/EnterpriseSelect";
 
 const defaultListQuery = {
   pageNum: 1,
@@ -228,8 +113,8 @@ const defaultPolygon = {
 };
 
 export default {
-  name: "visual",
-  components: {EnterpriseSelect},
+  name: "CenterMap",
+  components: {},
   data() {
     return {
       center: [119.615241, 30.611064],
@@ -246,6 +131,7 @@ export default {
       path: [],
       editable: false,
       draggable: true,
+      showLabel: false,
       fill: "#409EFF",
       polygonList: [],
       listQuery: Object.assign({}, defaultListQuery),
@@ -298,11 +184,13 @@ export default {
         this.getProductCategoryStats(null);
         this.getTodayNum(null);
         this.getInspectionList(null);
+        this.changeBlockSelected(null)
       } else {
         this.getDeviceNum(val.id);
         this.getProductCategoryStats(val.id);
         this.getTodayNum(val.id);
         this.getInspectionList(val.id);
+        this.changeBlockSelected(val)
       }
     },
   },
@@ -313,14 +201,6 @@ export default {
     },
   },
   methods: {
-    getEnterprise(enterprise) {
-      if (enterprise && enterprise.id != -1) {
-        this.listQuery.enterpriseId = enterprise.id
-      } else {
-        this.listQuery.enterpriseId = null
-      }
-      this.getList()
-    },
     getList() {
       fetchList(this.listQuery).then((response) => {
         this.blockList = response.data.list;
@@ -459,6 +339,9 @@ export default {
         this.inspectionList = response.data.list;
       });
     },
+    changeBlockSelected(block) {
+      this.$emit('changeBlockSelected', block);
+    }
   },
 };
 </script>
@@ -466,7 +349,7 @@ export default {
 <style scoped>
 .contain {
   position: relative;
-  height: calc(100vh - 50px);
+  height: 100%;
   box-sizing: border-box;
   overflow: hidden;
   width: 100%;
@@ -477,7 +360,7 @@ export default {
 .contain .map {
   position: absolute;
   height: 100%;
-  width: calc(100% - 48px);
+  width: calc(100%);
   background-color: rgb(204, 204, 204);
 }
 .contain .map .mapContainer {
@@ -584,6 +467,17 @@ export default {
   font-size: 16px;
   margin: 16px 0px;
 }
+.side-card .device-statistic {
+  user-select: none;
+  border-bottom: 1px solid rgb(235, 238, 245);
+}
+.side-card .device-statistic .item {
+  -webkit-box-flex: 1;
+  padding-bottom: 15px;
+  text-align: center;
+  cursor: pointer;
+  flex: 1 1 0%;
+}
 .side-card .device-statistic .item h4 {
   margin-bottom: 5px;
   font-size: 12px;
@@ -610,8 +504,8 @@ side-card .water-log .inspection-data {
 }
 .contain .color-desc {
   position: absolute;
-  left: 34px;
-  bottom: 30px;
+  left: 15px;
+  bottom: 10px;
   width: 150px;
   box-sizing: border-box;
   padding: 0px;
@@ -644,8 +538,33 @@ side-card .water-log .inspection-data {
 .contain .color-desc .list li span.active {
   background-color: #409eff;
 }
+
+.contain .total-statistic {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  padding: 0px 18%;
+  width: 100%;
+  color: #fff;
+}
+.contain .total-statistic .item {
+  -webkit-box-flex: 1;
+  padding-bottom: 15px;
+  text-align: center;
+  cursor: pointer;
+  flex: 1 1 0%;
+  font-size: 20px;
+}
+.contain .total-statistic .item .num {
+  font-size: 38px;
+  font-family: PingFangSC-Semibold, "PingFang SC";
+  font-weight: 600;
+}
 </style>
 <style>
+.amap-copyright {
+   display: none !important;
+}
 .amap-logo {
   display: none !important;
 }

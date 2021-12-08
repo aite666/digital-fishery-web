@@ -42,9 +42,7 @@
           <div class="total-frame">
             <img :src="img_home_order" class="total-icon" />
             <div class="total-title">本周销售总数</div>
-            <div class="total-value" v-if="stats.weekSaleQuantity == ''">
-              0
-            </div>
+            <div class="total-value" v-if="stats.weekSaleQuantity == ''">0</div>
             <div v-else class="total-value">{{ stats.weekSaleQuantity }}</div>
           </div>
         </el-col>
@@ -55,7 +53,9 @@
             <div class="total-value" v-if="stats.lastWeekSaleQuantity == ''">
               0
             </div>
-            <div v-else class="total-value">{{ stats.lastWeekSaleQuantity }}</div>
+            <div v-else class="total-value">
+              {{ stats.lastWeekSaleQuantity }}
+            </div>
           </div>
         </el-col>
         <el-col :span="6">
@@ -184,7 +184,9 @@
                 {{ stats.weekBatchNum }}
               </div>
               <div v-if="batchRate != null">
-                <span class="color-danger" style="font-size: 14px">{{batchRate}}%</span>
+                <span class="color-danger" style="font-size: 14px"
+                  >{{ batchRate }}%</span
+                >
                 <span style="color: #c0c4cc; font-size: 14px">同比上周</span>
               </div>
             </div>
@@ -194,11 +196,33 @@
                 <span v-if="stats.weekBatchQuantity == ''">0</span>
                 <span v-else>{{ stats.weekBatchQuantity }}</span>
               </div>
-              <div v-if="weekBatchQuantity1 != null || weekBatchQuantity2 != null">
-                <span v-if="weekBatchQuantity1 != null && weekBatchQuantity1 >= 0" class="color-success" style="font-size: 14px">+{{weekBatchQuantity1}}公斤</span>
-                <span v-if="weekBatchQuantity1 != null && weekBatchQuantity1 < 0" class="color-danger" style="font-size: 14px">{{weekBatchQuantity1}}公斤</span>
-                <span v-if="weekBatchQuantity2 != null && weekBatchQuantity2 >= 0" class="color-success" style="font-size: 14px">+{{weekBatchQuantity2}}尾</span>
-                <span v-if="weekBatchQuantity2 != null && weekBatchQuantity2 < 0" class="color-danger" style="font-size: 14px">{{weekBatchQuantity2}}尾</span>
+              <div
+                v-if="weekBatchQuantity1 != null || weekBatchQuantity2 != null"
+              >
+                <span
+                  v-if="weekBatchQuantity1 != null && weekBatchQuantity1 >= 0"
+                  class="color-success"
+                  style="font-size: 14px"
+                  >+{{ weekBatchQuantity1 }}公斤</span
+                >
+                <span
+                  v-if="weekBatchQuantity1 != null && weekBatchQuantity1 < 0"
+                  class="color-danger"
+                  style="font-size: 14px"
+                  >{{ weekBatchQuantity1 }}公斤</span
+                >
+                <span
+                  v-if="weekBatchQuantity2 != null && weekBatchQuantity2 >= 0"
+                  class="color-success"
+                  style="font-size: 14px"
+                  >+{{ weekBatchQuantity2 }}尾</span
+                >
+                <span
+                  v-if="weekBatchQuantity2 != null && weekBatchQuantity2 < 0"
+                  class="color-danger"
+                  style="font-size: 14px"
+                  >{{ weekBatchQuantity2 }}尾</span
+                >
                 <span style="color: #c0c4cc; font-size: 14px">相比上周</span>
               </div>
             </div>
@@ -208,11 +232,33 @@
                 <span v-if="stats.weekSaleQuantity == ''">0</span>
                 <span v-else>{{ stats.weekSaleQuantity }}</span>
               </div>
-              <div v-if="weekSaleQuantity1 != null || weekSaleQuantity2 != null">
-                <span v-if="weekSaleQuantity1 != null && weekSaleQuantity1 >= 0" class="color-success" style="font-size: 14px">+{{weekSaleQuantity1}}公斤</span>
-                <span v-if="weekSaleQuantity1 != null && weekSaleQuantity1 < 0" class="color-danger" style="font-size: 14px">{{weekSaleQuantity1}}公斤</span>
-                <span v-if="weekSaleQuantity2 != null && weekSaleQuantity2 >= 0" class="color-success" style="font-size: 14px">+{{weekSaleQuantity2}}尾</span>
-                <span v-if="weekSaleQuantity2 != null && weekSaleQuantity2 < 0" class="color-danger" style="font-size: 14px">{{weekSaleQuantity2}}尾</span>
+              <div
+                v-if="weekSaleQuantity1 != null || weekSaleQuantity2 != null"
+              >
+                <span
+                  v-if="weekSaleQuantity1 != null && weekSaleQuantity1 >= 0"
+                  class="color-success"
+                  style="font-size: 14px"
+                  >+{{ weekSaleQuantity1 }}公斤</span
+                >
+                <span
+                  v-if="weekSaleQuantity1 != null && weekSaleQuantity1 < 0"
+                  class="color-danger"
+                  style="font-size: 14px"
+                  >{{ weekSaleQuantity1 }}公斤</span
+                >
+                <span
+                  v-if="weekSaleQuantity2 != null && weekSaleQuantity2 >= 0"
+                  class="color-success"
+                  style="font-size: 14px"
+                  >+{{ weekSaleQuantity2 }}尾</span
+                >
+                <span
+                  v-if="weekSaleQuantity2 != null && weekSaleQuantity2 < 0"
+                  class="color-danger"
+                  style="font-size: 14px"
+                  >{{ weekSaleQuantity2 }}尾</span
+                >
                 <span style="color: #c0c4cc; font-size: 14px">相比上周</span>
               </div>
             </div>
@@ -222,8 +268,18 @@
                 ￥{{ stats.weekSaleAmount }}
               </div>
               <div v-if="weekSaleAmountRate != null">
-                <span v-if="weekSaleAmountRate >= 0" class="color-success" style="font-size: 14px">+{{ weekSaleAmountRate }}%</span>
-                <span v-if="weekSaleAmountRate < 0" class="color-danger" style="font-size: 14px">{{ weekSaleAmountRate }}%</span>
+                <span
+                  v-if="weekSaleAmountRate >= 0"
+                  class="color-success"
+                  style="font-size: 14px"
+                  >+{{ weekSaleAmountRate }}%</span
+                >
+                <span
+                  v-if="weekSaleAmountRate < 0"
+                  class="color-danger"
+                  style="font-size: 14px"
+                  >{{ weekSaleAmountRate }}%</span
+                >
                 <span style="color: #c0c4cc; font-size: 14px">同比上周</span>
               </div>
             </div>
@@ -296,16 +352,24 @@ export default {
           {
             text: "最近一周",
             onClick(picker) {
-              let start = formatDate(new Date(new Date().getTime() - 3600 * 1000 * 24 * 7), "yyyy-MM-dd") + ' 00:00:00';
-              let end = formatDate(new Date(), "yyyy-MM-dd") + ' 00:00:00';
+              let start =
+                formatDate(
+                  new Date(new Date().getTime() - 3600 * 1000 * 24 * 7),
+                  "yyyy-MM-dd"
+                ) + " 00:00:00";
+              let end = formatDate(new Date(), "yyyy-MM-dd") + " 00:00:00";
               picker.$emit("pick", [str2Date(start), str2Date(end)]);
             },
           },
           {
             text: "最近一月",
             onClick(picker) {
-              let start = formatDate(new Date(new Date().getTime() - 3600 * 1000 * 24 * 30), "yyyy-MM-dd") + ' 00:00:00';
-              let end = formatDate(new Date(), "yyyy-MM-dd") + ' 00:00:00';
+              let start =
+                formatDate(
+                  new Date(new Date().getTime() - 3600 * 1000 * 24 * 30),
+                  "yyyy-MM-dd"
+                ) + " 00:00:00";
+              let end = formatDate(new Date(), "yyyy-MM-dd") + " 00:00:00";
               picker.$emit("pick", [str2Date(start), str2Date(end)]);
             },
           },
@@ -366,43 +430,52 @@ export default {
       getHomeStats().then((response) => {
         this.stats = response.data;
         if (this.stats.lastWeekBatchNum != 0) {
-          this.batchRate = (this.stats.weekBatchNum / this.stats.lastWeekBatchNum - 1) * 100
+          this.batchRate =
+            (this.stats.weekBatchNum / this.stats.lastWeekBatchNum - 1) * 100;
         }
-        let batchValueList = this.getIncreaseNum(this.stats.lastWeekBatchQuantity, this.stats.weekBatchQuantity)
-        this.weekBatchQuantity1 = batchValueList[0]
-        this.weekBatchQuantity2 = batchValueList[1]
-        let saleValueList = this.getIncreaseNum(this.stats.lastWeekSaleQuantity, this.stats.weekSaleQuantity)
-        this.weekSaleQuantity1 = saleValueList[0]
-        this.weekSaleQuantity2 = saleValueList[1]
+        let batchValueList = this.getIncreaseNum(
+          this.stats.lastWeekBatchQuantity,
+          this.stats.weekBatchQuantity
+        );
+        this.weekBatchQuantity1 = batchValueList[0];
+        this.weekBatchQuantity2 = batchValueList[1];
+        let saleValueList = this.getIncreaseNum(
+          this.stats.lastWeekSaleQuantity,
+          this.stats.weekSaleQuantity
+        );
+        this.weekSaleQuantity1 = saleValueList[0];
+        this.weekSaleQuantity2 = saleValueList[1];
         if (this.stats.lastWeekSaleAmount != 0) {
-          this.weekSaleAmountRate = (this.stats.weekSaleAmount / this.stats.lastWeekSaleAmount - 1) * 100
+          this.weekSaleAmountRate =
+            (this.stats.weekSaleAmount / this.stats.lastWeekSaleAmount - 1) *
+            100;
         }
       });
     },
     getIncreaseNum(lastValue, nowValue) {
-      let valueList = lastValue.split('+');
-      let valueList2 = nowValue.split('+');
-      let v1 = 0
-      let v2 = 0
-      let v11 = 0
-      let v22 = 0
+      let valueList = lastValue.split("+");
+      let valueList2 = nowValue.split("+");
+      let v1 = 0;
+      let v2 = 0;
+      let v11 = 0;
+      let v22 = 0;
       for (let item of valueList) {
-        if (item.indexOf('公斤') > -1) {
-          v1 = parseInt(item.substring(0, item.length - 2))
-        } else if (item.indexOf('尾') > -1) {
-          v2 = parseInt(item.substring(0, item.length - 1))
+        if (item.indexOf("公斤") > -1) {
+          v1 = parseInt(item.substring(0, item.length - 2));
+        } else if (item.indexOf("尾") > -1) {
+          v2 = parseInt(item.substring(0, item.length - 1));
         }
       }
       for (let item of valueList2) {
-        if (item.indexOf('公斤') > -1) {
-          v11 = parseInt(item.substring(0, item.length - 2))
-        } else if (item.indexOf('尾') > -1) {
-          v22 = parseInt(item.substring(0, item.length - 1))
+        if (item.indexOf("公斤") > -1) {
+          v11 = parseInt(item.substring(0, item.length - 2));
+        } else if (item.indexOf("尾") > -1) {
+          v22 = parseInt(item.substring(0, item.length - 1));
         }
       }
-      let dif1 = v11 - v1
-      let dif2 = v22 - v2
-      return [dif1, dif2]
+      let dif1 = v11 - v1;
+      let dif2 = v22 - v2;
+      return [dif1, dif2];
     },
     handleDateChange() {
       this.getChartData();
@@ -416,13 +489,13 @@ export default {
       let params = {
         startTime: formatDate(this.batchNumDate[0], "yyyy-MM-dd hh:mm:ss"),
         endTime: formatDate(this.batchNumDate[1], "yyyy-MM-dd hh:mm:ss"),
-      }
+      };
       this.loading = true;
       getChartData(params).then((response) => {
         this.chartData = {
           columns: ["date", "batchNum", "saleAmount"],
           rows: [],
-        }
+        };
         this.chartData.rows = response.data;
         this.dataEmpty = false;
         this.loading = false;
@@ -460,6 +533,7 @@ export default {
 }
 
 .address-layout {
+  
 }
 
 .total-layout {

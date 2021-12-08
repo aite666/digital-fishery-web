@@ -3,7 +3,7 @@
     <dv-decoration-8 class="header-left-decoration" />
     <dv-decoration-5 class="header-center-decoration" />
     <dv-decoration-8 class="header-right-decoration" :reverse="true" />
-    <div class="center-title">{{mainTitle}}</div>
+    <div class="center-title">{{ mainTitle }}</div>
   </div>
 </template>
 
@@ -13,11 +13,10 @@ export default {
   props: {
     mainTitle: {
       type: String,
-      default: '天赋渔鲜品牌专题分析',
+      default: '基地一张图',
     },
   },
 }
-
 </script>
 
 <style lang="less">

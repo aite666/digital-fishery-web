@@ -1,11 +1,9 @@
 <template>
   <div id="water-level-chart">
-    <div class="water-level-chart-title">年计划销售额完成情况</div>
-
+    <div class="water-level-chart-title">{{title}}</div>
     <div class="water-level-chart-details">
-      累计完成<span>123,985,680</span>元
+      累计完成<span>{{amountNum.toLocaleString()}}</span>元
     </div>
-
     <div class="chart-container">
       <dv-water-level-pond :config="config" />
     </div>
@@ -15,14 +13,48 @@
 <script>
 export default {
   name: 'WaterLevelChart',
+  props: {
+    title: {
+      type: String,
+      default: "年计划销售额完成情况",
+    },
+    amount: {
+      type: String,
+      default: "0",
+    },
+    percent: {
+      type: String,
+      default: "0",
+    },
+  },
   data () {
     return {
+      amountNum: 0,
       config: {
         data: [45],
         shape: 'round',
         waveHeight: 25,
         waveNum: 2
       }
+    }
+  },
+  watch: {
+    amount(val, valOld) {
+      this.createData();
+    },
+    percent(val, valOld) {
+      this.createData();
+    },
+  },
+  created() {
+    const { createData } = this;
+    createData();
+  },
+  methods: {
+    createData() {
+      this.amountNum = parseInt(this.amount);
+      this.config.data[0] =  parseFloat(this.percent);
+      this.config = Object.assign({}, this.config);
     }
   }
 }

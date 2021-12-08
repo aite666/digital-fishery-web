@@ -21,8 +21,10 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import utils from './utils'
+import _ from 'lodash'
 
 Vue.prototype.$utils = utils
+Vue.prototype.lodash = _
 
 AmapVue.config.version = '2.0'; // 默认2.0，这里可以不修改
 AmapVue.config.key = 'fef2a05990680da15b73af8b400e37c3';

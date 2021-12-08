@@ -2,6 +2,7 @@
   <div id="digital-flop">
     <div
       class="digital-flop-item"
+      :style="{ width: itemWidth }"
       v-for="item in digitalFlopData"
       :key="item.title"
     >
@@ -9,164 +10,77 @@
       <div class="digital-flop">
         <dv-digital-flop
           :config="item.number"
-          style="width:100px;height:50px;"
+          style="width: 100px; height: 50px"
         />
-          <div class="unit">{{ item.unit }}</div>
+        <div class="unit">{{ item.unit }}</div>
       </div>
     </div>
-
     <dv-decoration-10 />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'DigitalFlop',
-  data () {
+  name: "DigitalFlop",
+  props: {
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  data() {
     return {
-      digitalFlopData: []
-    }
+      digitalFlopData: [],
+      itemWidth: "11%",
+    };
+  },
+  created() {
+    console.log(this.dataList);
+    const { createData } = this;
+    createData();
+    setInterval(createData, 20000);
+  },
+  watch: {
+    dataList(val, valOld) {
+      this.createData();
+    },
   },
   methods: {
-    createData () {
-      const { randomExtend } = this
-
-      this.digitalFlopData = [
-        {
-          title: '青鱼',
+    createData() {
+      const { randomExtend } = this;
+      let colorList = ["#4d99fc", "#f46827", "#40faee"];
+      let digitalFlopData = [];
+      this.itemWidth =
+        parseInt((100 * 2) / 3 / this.dataList.length).toString() + "%";
+      for (let i = 0; i < this.dataList.length; i++) {
+        let item = this.dataList[i];
+        let min = parseInt((item.value * 3) / 4);
+        let data = {
+          title: item.name,
           number: {
-            number: [randomExtend(20000, 30000)],
-            content: '{nt}',
-            textAlign: 'right',
+            number: [randomExtend(min, item.value)],
+            content: "{nt}",
+            textAlign: "right",
             style: {
-              fill: '#4d99fc',
-              fontWeight: 'bold'
-            }
+              fill: colorList[i % 3],
+              fontWeight: "bold",
+            },
           },
-          unit: '公斤'
-        },
-        {
-          title: '草鱼',
-          number: {
-            number: [randomExtend(20000, 30000)],
-            content: '{nt}',
-            textAlign: 'right',
-            style: {
-              fill: '#f46827',
-              fontWeight: 'bold'
-            }
-          },
-          unit: '公斤'
-        },
-        {
-          title: '鲢鱼',
-          number: {
-            number: [randomExtend(20000, 30000)],
-            content: '{nt}',
-            textAlign: 'right',
-            style: {
-              fill: '#40faee',
-              fontWeight: 'bold'
-            }
-          },
-          unit: '公斤'
-        },
-        {
-          title: '鳙鱼',
-          number: {
-            number: [randomExtend(20000, 30000)],
-            content: '{nt}',
-            textAlign: 'right',
-            style: {
-              fill: '#4d99fc',
-              fontWeight: 'bold'
-            }
-          },
-          unit: '公斤'
-        },
-        {
-          title: '鲤鱼',
-          number: {
-            number: [randomExtend(20000, 30000)],
-            content: '{nt}',
-            textAlign: 'right',
-            style: {
-              fill: '#f46827',
-              fontWeight: 'bold'
-            }
-          },
-          unit: '公斤'
-        },
-        {
-          title: '鲫鱼',
-          number: {
-            number: [randomExtend(20000, 30000)],
-            content: '{nt}',
-            textAlign: 'right',
-            style: {
-              fill: '#40faee',
-              fontWeight: 'bold'
-            }
-          },
-          unit: '公斤'
-        },
-        {
-          title: '鳊鱼',
-          number: {
-            number: [randomExtend(20000, 30000)],
-            content: '{nt}',
-            textAlign: 'right',
-            style: {
-              fill: '#4d99fc',
-              fontWeight: 'bold'
-            }
-          },
-          unit: '公斤'
-        },
-        // {
-        //   title: '鳊鱼',
-        //   number: {
-        //     number: [randomExtend(20000, 30000)],
-        //     content: '{nt}',
-        //     textAlign: 'right',
-        //     style: {
-        //       fill: '#f46827',
-        //       fontWeight: 'bold'
-        //     }
-        //   },
-        //   unit: '公斤'
-        // },
-        // {
-        //   title: '鳊鱼',
-        //   number: {
-        //     number: [randomExtend(20000, 30000)],
-        //     content: '{nt}',
-        //     textAlign: 'right',
-        //     style: {
-        //       fill: '#40faee',
-        //       fontWeight: 'bold'
-        //     }
-        //   },
-        //   unit: '公斤'
-        // }
-      ]
-    },
-    randomExtend (minNum, maxNum) {
-      if (arguments.length === 1) {
-        return parseInt(Math.random() * minNum + 1, 10)
-      } else {
-        return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10)
+          unit: "公斤",
+        };
+        digitalFlopData.push(data);
       }
-    }
+      this.digitalFlopData = digitalFlopData;
+    },
+    randomExtend(minNum, maxNum) {
+      if (arguments.length === 1) {
+        return parseInt(Math.random() * minNum + 1, 10);
+      } else {
+        return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+      }
+    },
   },
-  mounted () {
-    const { createData } = this
-
-    createData()
-
-    setInterval(createData, 30000)
-  }
-}
+};
 </script>
 
 <style lang="less">
@@ -175,7 +89,7 @@ export default {
   height: 15%;
   flex-shrink: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   background-color: rgba(6, 30, 93, 0.5);
 
@@ -188,7 +102,7 @@ export default {
   }
 
   .digital-flop-item {
-    width: 11%;
+    // width: 11%;
     height: 80%;
     display: flex;
     flex-direction: column;
