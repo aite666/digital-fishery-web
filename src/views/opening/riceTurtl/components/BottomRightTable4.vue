@@ -2,7 +2,7 @@
   <div class="bottom-right-table-4">
     <dv-border-box-6>
       <div class="table-name">
-        <img src="../../../../assets/images/datav_icon4.png" />甲鱼施放饲料排行榜
+        <img src="../../../../assets/images/datav_icon4.png" />{{title}}
       </div>
 
       <dv-scroll-board :config="config" />
@@ -13,6 +13,21 @@
 <script>
 export default {
   name: 'BottomRightTable4',
+  props: {
+    title: {
+      type: String,
+      default: "",
+    },
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  watch: {
+    dataList(val, valOld) {
+      this.createData();
+    },
+  },
   data () {
     return {
       config: {
@@ -31,7 +46,23 @@ export default {
         evenRowBGC: 'rgba(10, 32, 50, 0.3)'
       }
     }
-  }
+  },
+  created() {
+    this.createData();
+  },
+  methods: {
+    createData() {
+      if (this.dataList.length > 0) {
+        let configData = [];
+        for (let i = 0; i < this.dataList.length; i++) {
+          let item = this.dataList[i];
+          configData.push([item['name'], item['value']]);
+        }
+        this.config.data = configData;
+        this.config = Object.assign({}, this.config);
+      }
+    },
+  },
 }
 </script>
 

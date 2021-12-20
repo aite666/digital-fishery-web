@@ -161,9 +161,9 @@ export default {
 
   .main-content {
     display: flex;
+    flex-direction: row;
     width: 100%;
     height: calc(~"100% - 100px");
-
     .block-left-content {
       display: flex;
       width: 30%;

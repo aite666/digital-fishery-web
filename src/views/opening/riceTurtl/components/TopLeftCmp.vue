@@ -2,24 +2,24 @@
   <div class="top-left-cmp">
     <div class="dc-left">
       <dv-border-box-5>
-        <div class="main-value"><span>12300</span>千斤</div>
-        <div class="compare-value"><span>同比</span>81%</div>
-        <div class="compare-value"><span>环比</span>15%</div>
+        <div class="main-value"><span>{{data11}}</span>千斤</div>
+        <div class="compare-value"><span>同比</span>{{data11}}%</div>
+        <div class="compare-value"><span>环比</span>{{data11}}%</div>
       </dv-border-box-5>
       <div class="dc-text">
-        水稻产量
+        {{title1}}
         <dv-decoration-3 style="width:200px;height:20px;" />
       </div>
     </div>
     <div class="dc-right">
       <div class="dc-text">
-        甲鱼产量
+        {{title2}}
         <dv-decoration-3 style="width:200px;height:20px;" />
       </div>
       <dv-border-box-5 :reverse="true">
-        <div class="main-value"><span>150</span>条</div>
-        <div class="compare-value"><span>同比</span>66%</div>
-        <div class="compare-value"><span>环比</span>9%</div>
+        <div class="main-value"><span>{{data21}}</span>条</div>
+        <div class="compare-value"><span>同比</span>{{data22}}%</div>
+        <div class="compare-value"><span>环比</span>{{data23}}%</div>
       </dv-border-box-5>
     </div>
   </div>
@@ -27,7 +27,41 @@
 
 <script>
 export default {
-  name: 'TopLeftCmp'
+  name: 'TopLeftCmp',
+  props: {
+    title1: {
+      type: String,
+      default: '',
+    },
+    data11: {
+      type: String,
+      default: '',
+    },
+    data12: {
+      type: String,
+      default: '',
+    },
+    data13: {
+      type: String,
+      default: '',
+    },
+    title2: {
+      type: String,
+      default: '',
+    },
+    data21: {
+      type: String,
+      default: '',
+    },
+    data22: {
+      type: String,
+      default: '',
+    },
+    data23: {
+      type: String,
+      default: '',
+    },
+  },
 }
 </script>
 

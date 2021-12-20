@@ -1,8 +1,8 @@
 <template>
   <div class="top-middle-cmp">
     <div class="chart-name">
-      水稻田平均温度日趋势
-      <dv-decoration-3 style="width:200px;height:20px;" />
+      {{ title }}
+      <dv-decoration-3 style="width: 200px; height: 20px" />
     </div>
     <dv-charts :option="option" />
   </div>
@@ -10,88 +10,137 @@
 
 <script>
 export default {
-  name: 'TopMiddleCmp',
-  data () {
+  name: "TopMiddleCmp",
+  props: {
+    title: {
+      type: String,
+      default: "",
+    },
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  watch: {
+    dataList(val, valOld) {
+      this.createData();
+    },
+  },
+  data() {
     return {
       option: {
         legend: {
-          data: ['水稻田平均温度'],
+          data: [this.title],
           textStyle: {
-            fill: '#fff'
-          }
+            fill: "#fff",
+          },
         },
         xAxis: {
           data: [
-            '10/01', '10/02', '10/03', '10/04', '10/05', '10/06',
-            '10/07', '10/07', '10/08', '10/09', '10/10', '10/11',
-            '10/12', '10/13', '10/14', '10/15'
+            "2021-01",
+            "2021-02",
+            "2021-03",
+            "2021-04",
+            "2021-05",
+            "2021-06",
+            "2021-07",
+            "2021-08",
+            "2021-09",
+            "2021-10",
+            "2021-11",
+            "2021-12",
           ],
           boundaryGap: false,
           axisLine: {
             style: {
-              stroke: '#999'
-            }
+              stroke: "#999",
+            },
           },
           axisLabel: {
             style: {
-              fill: '#999'
-            }
+              fill: "#999",
+            },
           },
           axisTick: {
-            show: false
-          }
+            show: false,
+          },
         },
         yAxis: {
-          data: 'value',
+          data: "value",
           splitLine: {
-            show: false
+            show: false,
           },
           axisLine: {
             style: {
-              stroke: '#999'
-            }
+              stroke: "#999",
+            },
           },
           axisLabel: {
             style: {
-              fill: '#999'
+              fill: "#999",
             },
-            formatter ({ value }) {
-              return value.toFixed(2)
-            }
           },
           axisTick: {
-            show: false
+            show: false,
           },
-          min: 20,
-          max: 40,
-          interval: 5
+          min: 0,
         },
         series: [
           {
             data: [
-              30.12, 31.66, 30.84, 29.22, 31.11, 31.45,
-              32.44, 31.81, 30.84, 30.32, 30.14, 29.45,
-              32.15, 31.45, 31.64, 31.89
+              2122,
+              2668,
+              2847,
+              2226,
+              2115,
+              2442,
+              2813,
+              2843,
+              2377,
+              2144,
+              2452,
+              2156,
             ],
-            type: 'line',
-            name: '水稻田平均温度',
+            type: "line",
+            name: this.title,
             smooth: true,
             lineArea: {
               show: true,
-              gradient: ['rgba(55, 162, 218, 0.6)', 'rgba(55, 162, 218, 0)']
+              gradient: ["rgba(55, 162, 218, 0.6)", "rgba(55, 162, 218, 0)"],
             },
             linePoint: {
               radius: 4,
               style: {
-                fill: '#00db95'
-              }
-            }
-          }
-        ]
+                fill: "#00db95",
+              },
+            },
+          },
+        ],
+      },
+    };
+  },
+  created() {
+    this.createData();
+  },
+  methods: {
+    createData() {
+      if (this.dataList.length > 0) {
+        let timeList = [];
+        let valueList = [];
+        for (let i = 0; i < this.dataList.length; i++) {
+          let item = this.dataList[i];
+          timeList.push(item.time);
+          valueList.push(parseInt(item.value));
+        }
+        console.log(timeList)
+        console.log(valueList)
+        this.option.xAxis.data = timeList;
+        this.option.series[0].data = valueList;
+        this.option = Object.assign({}, this.option);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="less">

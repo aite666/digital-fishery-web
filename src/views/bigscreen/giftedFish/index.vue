@@ -389,7 +389,6 @@ export default {
     },
     handleUpdateBigscreen() {
       this.bigscreenDetailCopy = lodash.cloneDeep(this.bigscreenDetail);
-      console.log(this.bigscreenDetailCopy);
       this.checkTableDataEmpty();
       this.dialogVisible = true;
     },

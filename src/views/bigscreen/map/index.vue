@@ -232,13 +232,13 @@ export default {
       get: function () {
         let pics = [];
         if (
-          this.bigscreenDetail.configDataJson.centerBottomImages === undefined ||
-          this.bigscreenDetail.configDataJson.centerBottomImages == null ||
-          this.bigscreenDetail.configDataJson.centerBottomImages === ""
+          this.bigscreenDetailCopy.configDataJson.centerBottomImages === undefined ||
+          this.bigscreenDetailCopy.configDataJson.centerBottomImages == null ||
+          this.bigscreenDetailCopy.configDataJson.centerBottomImages === ""
         ) {
           return pics;
         }
-        let imageList = this.bigscreenDetail.configDataJson.centerBottomImages.split(",");
+        let imageList = this.bigscreenDetailCopy.configDataJson.centerBottomImages.split(",");
         for (let i = 0; i < imageList.length; i++) {
           pics.push(imageList[i]);
         }
@@ -246,18 +246,18 @@ export default {
       },
       set: function (newValue) {
         if (newValue == null || newValue.length === 0) {
-          this.bigscreenDetail.configDataJson.centerBottomImages = null;
+          this.bigscreenDetailCopy.configDataJson.centerBottomImages = null;
         } else {
-          this.bigscreenDetail.configDataJson.centerBottomImages = "";
+          this.bigscreenDetailCopy.configDataJson.centerBottomImages = "";
           if (newValue.length > 1) {
             for (let i = 0; i < newValue.length; i++) {
-              this.bigscreenDetail.configDataJson.centerBottomImages += newValue[i];
+              this.bigscreenDetailCopy.configDataJson.centerBottomImages += newValue[i];
               if (i !== newValue.length - 1) {
-                this.bigscreenDetail.configDataJson.centerBottomImages += ",";
+                this.bigscreenDetailCopy.configDataJson.centerBottomImages += ",";
               }
             }
           } else {
-            this.bigscreenDetail.configDataJson.centerBottomImages = newValue[0];
+            this.bigscreenDetailCopy.configDataJson.centerBottomImages = newValue[0];
           }
         }
       },

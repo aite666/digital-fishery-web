@@ -1,7 +1,7 @@
 <template>
   <div class="bottom-left-chart-2">
-    <div class="header-name">区试巡查平均用时</div>
-    <div class="details-value"><span>34.2</span>分钟</div>
+    <div class="header-name">{{title}}</div>
+    <div class="details-value"><span>{{timeAvg}}</span>分钟</div>
     <dv-charts :option="option" />
   </div>
 </template>
@@ -9,6 +9,25 @@
 <script>
 export default {
   name: 'BottomLeftChart2',
+  props: {
+    title: {
+      type: String,
+      default: "",
+    },
+    timeAvg: {
+      type: String,
+      default: "",
+    },
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  watch: {
+    dataList(val, valOld) {
+      this.createData();
+    },
+  },
   data () {
     return {
       option: {
@@ -19,7 +38,7 @@ export default {
             endAngle: Math.PI * 1.5,
             arcLineWidth: 7,
             data: [
-              { name: '10分钟以内', value: 25, gradient: ['#03c2fd', '#1ed3e5', '#2fded6'] },
+              { name: '10分钟以内', value: 25, gradient: ['#03c2fd', '#1ed3e5', '#2fded6'], radius: '60%' },
               { name: '15分钟以内', value: 45, gradient: ['#03c2fd', '#1ed3e5', '#2fded6'], radius: '52%' },
               { name: '30分钟以内', value: 65, gradient: ['#03c2fd', '#1ed3e5', '#2fded6'], radius: '44%' },
               { name: '45分钟以内', value: 35, gradient: ['#03c2fd', '#1ed3e5', '#2fded6'], radius: '36%' },
@@ -55,7 +74,29 @@ export default {
         ]
       }
     }
-  }
+  },
+  created() {
+    this.createData();
+  },
+  methods: {
+    createData() {
+      if (this.dataList.length > 0) {
+        let configData = [];
+        for (let i = 0; i < this.dataList.length; i++) {
+          let item = this.dataList[i];
+          let value = parseInt(item['value'])
+          configData.push({
+            name: item['name'],
+            value: value,
+            gradient: ['#03c2fd', '#1ed3e5', '#2fded6'],
+            radius: (60 - 8 * i) + '%'
+          });
+        }
+        this.option.series[0].data = configData;
+        this.option = Object.assign({}, this.option);
+      }
+    },
+  },
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="bottom-left-chart-1">
-    <div class="header-name">销售客户占比</div>
-    <div class="details-value"><span>1,129,223</span>￥</div>
+    <div class="header-name">{{title}}</div>
+    <div class="details-value"><span>{{saleTotalNum.toLocaleString()}}</span>￥</div>
     <dv-charts :option="option" />
   </div>
 </template>
@@ -9,8 +9,31 @@
 <script>
 export default {
   name: 'BottomLeftChart1',
+  props: {
+    title: {
+      type: String,
+      default: "",
+    },
+    saleTotal: {
+      type: String,
+      default: "",
+    },
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  watch: {
+    saleTotal(val, valOld) {
+      this.getSaleTotalNum();
+    },
+    dataList(val, valOld) {
+      this.createData();
+    },
+  },
   data () {
     return {
+      saleTotalNum: 0,
       option: {
         series: [
           {
@@ -60,7 +83,33 @@ export default {
         color: ['#00c0ff', '#3de7c9', '#fff', '#00c0ff', '#3de7c9', '#fff']
       }
     }
-  }
+  },
+  created() {
+    this.getSaleTotalNum();
+    this.createData();
+  },
+  methods: {
+    getSaleTotalNum() {
+      this.saleTotalNum = parseInt(this.saleTotal);
+    },
+    createData() {
+      if (this.dataList.length > 0) {
+        let configData = [];
+        for (let i = 0; i < this.dataList.length; i++) {
+          let item = this.dataList[i];
+          let value = parseInt(item['value'])
+          let value2 = parseInt(item['value']) / 2
+          configData.push({
+            name: item['name'],
+            value: value,
+            radius: [value2 + '%', value + '%']
+          });
+        }
+        this.option.series[0].data = configData;
+        this.option = Object.assign({}, this.option);
+      }
+    },
+  },
 }
 </script>
 

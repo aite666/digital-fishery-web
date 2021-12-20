@@ -1,7 +1,7 @@
 <template>
   <div class="top-right-cmp">
     <div class="chart-name">
-      甲鱼条数日趋势
+      {{ title }}
       <dv-decoration-3 style="width:200px;height:20px;" />
     </div>
     <dv-charts :option="option" />
@@ -11,27 +11,30 @@
 <script>
 export default {
   name: 'TopRightCmp',
+  props: {
+    title: {
+      type: String,
+      default: "",
+    },
+    dataList: {
+      type: Array,
+      default: [],
+    },
+  },
+  watch: {
+    dataList(val, valOld) {
+      this.createData();
+    },
+  },
   data () {
     return {
       option: {
         legend: {
           data: [
             {
-              name: '甲鱼条数',
+              name: this.title,
               color: '#00baff'
             },
-            {
-              name: '气温',
-              color: '#ff5ca9'
-            },
-            {
-              name: '水温',
-              color: '#3de7c9'
-            },
-            {
-              name: 'PH',
-              color: '#f5d94e'
-            }
           ],
           textStyle: {
             fill: '#fff'
@@ -39,7 +42,7 @@ export default {
         },
         xAxis: {
           data: [
-            '10/01', '10/02', '10/03', '10/04', '10/05', '10/06', '10/07'
+            '2021-01', '2021-02', '2021-03', '2021-04', '2021-05', '2021-06', '2021-07'
           ],
           axisLine: {
             style: {
@@ -74,11 +77,10 @@ export default {
             show: false
           },
           min: 0,
-          max: 200
         },
         series: [
           {
-            name: '甲鱼条数',
+            name: this.title,
             data: [
               145, 146, 145, 147, 148, 150, 150
             ],
@@ -87,69 +89,29 @@ export default {
               fill: 'rgba(0, 186, 255, 0.4)'
             }
           },
-          {
-            name: '气温',
-            data: [
-              25, 24, 24, 27, 26, 21, 19
-            ],
-            type: 'line',
-            lineStyle: {
-              stroke: '#ff5ca9'
-            },
-            linePoint: {
-              radius: 4,
-              style: {
-                fill: '#ff5ca9',
-                stroke: 'transparent'
-              }
-            }
-          },
-          {
-            name: '水温',
-            data: [
-              15, 13, 14, 14, 16, 17, 13
-            ],
-            type: 'line',
-            smooth: true,
-            lineArea: {
-              show: true,
-              gradient: ['rgba(55, 162, 218, 0.6)', 'rgba(55, 162, 218, 0)']
-            },
-            lineStyle: {
-              lineDash: [5, 5]
-            },
-            linePoint: {
-              radius: 4,
-              style: {
-                fill: '#00db95'
-              }
-            }
-          },
-          {
-            data: [
-              5.2, 5.2, 4.2, 4.2, 5.2, 4.2, 3.2
-            ],
-            type: 'line',
-            name: 'PH',
-            lineArea: {
-              show: true,
-              gradient: ['rgba(245, 217, 79, 0.8)', 'rgba(245, 217, 79, 0.2)']
-            },
-            lineStyle: {
-              stroke: '#f5d94e'
-            },
-            linePoint: {
-              radius: 4,
-              style: {
-                fill: '#f5d94e',
-                stroke: 'transparent'
-              }
-            }
-          }
         ]
       }
     }
-  }
+  },
+  created() {
+    this.createData();
+  },
+  methods: {
+    createData() {
+      if (this.dataList.length > 0) {
+        let timeList = [];
+        let valueList = [];
+        for (let i = 0; i < this.dataList.length; i++) {
+          let item = this.dataList[i];
+          timeList.push(item.time);
+          valueList.push(parseInt(item.value));
+        }
+        this.option.xAxis.data = timeList;
+        this.option.series[0].data = valueList;
+        this.option = Object.assign({}, this.option);
+      }
+    },
+  },
 }
 </script>
 
