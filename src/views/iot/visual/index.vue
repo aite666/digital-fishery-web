@@ -7,9 +7,10 @@
         ref="myMap"
         map-style="amap://styles/whitesmoke"
         async
-        :zoom.sync="zoom"
-        :pitch.sync="pitch"
         :center.sync="center"
+        :pitch.sync="pitch"
+        :zoom.sync="zoom"
+        @complete="fitView"
         @hotspotclick="onHotspotClick"
         view-mode="3D"
       >
@@ -36,14 +37,14 @@
         >
         </amap-polygon>
         <amap-satellite-layer :visible="satellite" />
-        <!-- <amap-marker
-          v-if="position"
-          :position.sync="position"
-          draggable
+        <amap-marker
+          v-for="item in enterpriseList"
+          :key="item.index"
+          :position.sync="item.positionList"
           :label="{
-            content: positionText,
+            content: item.fisheryName,
           }"
-        /> -->
+        />
         <!-- <amap-map-type :defaultType.sync="mapType" /> -->
         <amap-control-bar
           :position="{
@@ -182,7 +183,7 @@
           :key="item.index"
           @mouseover="hoverPolygon = item"
           @click="
-            activePolygon ? (activePolygon = null) : (activePolygon = item)
+            activePolygon && activePolygon.index == item.index ? (activePolygon = null) : (activePolygon = item)
           "
         >
           <span
@@ -204,11 +205,13 @@ import {
   deleteBlock,
   getBlockDetail,
 } from "@/api/block";
+import { getEnterpriseList, getEnterpriseDetail } from "@/api/enterprise";
 import { getLiveWeather, getForecastWeather } from "@/api/weather";
 import { getProductCategoryList, getBatchList } from "@/api/batch";
 import { getDeviceList } from "@/api/device";
 import { getInspectionList } from "@/api/inspection";
 import { formatDate } from "@/utils/date";
+import { mapGetters } from "vuex";
 import EnterpriseSelect from "./../../info/enterprise/components/EnterpriseSelect";
 
 const defaultListQuery = {
@@ -232,7 +235,7 @@ export default {
   components: {EnterpriseSelect},
   data() {
     return {
-      center: [119.615241, 30.611064],
+      center: [119.498540, 30.627345],
       position: null,
       zoom: 17,
       pitch: 0,
@@ -248,8 +251,13 @@ export default {
       draggable: true,
       fill: "#409EFF",
       polygonList: [],
+      positionA: [119.498540,30.627345],
+      positionB: [119.581168,30.805163],
+      positionTextA: '赋石水库',
+      positionTextB: '安吉天子湖露新家庭农场',
       listQuery: Object.assign({}, defaultListQuery),
       blockList: null,
+      enterpriseList: null,
       hoverPolygon: null,
       activePolygon: null,
       cityCode: "330523",
@@ -298,18 +306,23 @@ export default {
         this.getProductCategoryStats(null);
         this.getTodayNum(null);
         this.getInspectionList(null);
+        this.fitView();
       } else {
         this.getDeviceNum(val.id);
         this.getProductCategoryStats(val.id);
         this.getTodayNum(val.id);
         this.getInspectionList(val.id);
+        if (val.path.length > 0) {
+          this.$map.setCenter(val.path[0]);
+          this.$map.setZoom(17);
+        }
       }
     },
   },
   computed: {
-    positionText() {
-      if (!this.position) return "";
-      return `${this.position[0]}, ${this.position[1]}`;
+    ...mapGetters(["enterpriseId"]),
+    $map() {
+      return this.$refs.myMap.$map;
     },
   },
   methods: {
@@ -322,6 +335,41 @@ export default {
       this.getList()
     },
     getList() {
+      if (this.enterpriseId == -1 && this.listQuery.enterpriseId == null) {
+        getEnterpriseList(this.listQuery).then((response) => {
+          let list = response.data.list;
+          for (let i=0; i<list.length; i++) {
+            let positionList = list[i]['fisheryPosition'].split(',')
+            list[i]['positionList'] = []
+            for (let j=0; j<positionList.length; j++) {
+              list[i]['positionList'].push(parseFloat(positionList[j]))
+            }
+          }
+          if (list.length > 0) {
+            this.center = list[0]['positionList']
+          }
+          this.enterpriseList = list;
+          this.getBlockList();
+        });
+      } else {
+        let enterpriseId = this.enterpriseId
+        if (enterpriseId == -1) {
+          enterpriseId = this.listQuery.enterpriseId
+        }
+        getEnterpriseDetail(enterpriseId).then((response) => {
+          let data = response.data;
+          let positionList = data['fisheryPosition'].split(',')
+          data['positionList'] = []
+          for (let j=0; j<positionList.length; j++) {
+            data['positionList'].push(parseFloat(positionList[j]))
+          }
+          this.center = data['positionList']
+          this.enterpriseList = [data];
+          this.getBlockList();
+        });
+      }
+    },
+    getBlockList() {
       fetchList(this.listQuery).then((response) => {
         this.blockList = response.data.list;
         let polygonList = [];
@@ -336,7 +384,18 @@ export default {
           polygonList.push(polygon);
         }
         this.polygonList = polygonList;
+        this.fitView()
       });
+    },
+    async fitView() {
+      await this.$nextTick();
+      setTimeout(() => {
+        this.$map.setFitView(null, false, [200, 200, 200, 200]);
+        if (this.enterpriseId != -1 || this.listQuery.enterpriseId != null) {
+          console.log()
+          this.$map.setZoom(17);
+        }
+      }, 1000)
     },
     onHotspotClick(e) {
       if (e && e.lnglat) {

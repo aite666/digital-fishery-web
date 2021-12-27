@@ -7,6 +7,14 @@ export function fetchList(params) {
   })
 }
 
+export function getEnterpriseList(params) {
+  return request({
+    url:'/enterprise/list',
+    method:'get',
+    params:params
+  })
+}
+
 export function createEnterprise(data) {
   return request({
     url:'/enterprise/create',

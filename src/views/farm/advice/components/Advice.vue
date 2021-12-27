@@ -16,7 +16,8 @@
         ></block-select>
       </el-form-item>
       <el-form-item label="养殖种类名称：" prop="productCategoryName">
-        <fish-cate-select @fish-cate="getFishCate"></fish-cate-select>
+        <fish-cate-select @fish-cate="getFishCate"
+        :productCateSelectedId="adviceDetail.productCategoryId"></fish-cate-select>
       </el-form-item>
       <el-form-item label="描述：" prop="description">
         <el-input

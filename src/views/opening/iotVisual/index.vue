@@ -67,10 +67,12 @@
         <amap
           class="mapContainer"
           ref="myMap"
-          :zoom.sync="zoom"
-          :center.sync="center"
-          @complete="setFitView"
+          map-style="amap://styles/whitesmoke"
+          @complete="fitView"
           cache-key="iot-map"
+          :center.sync="center"
+          :pitch.sync="pitch"
+          :zoom.sync="zoom"
           @click="onMapClick"
         >
           <amap-polygon
@@ -86,6 +88,14 @@
             :draggable="item.draggable"
           >
           </amap-polygon>
+          <amap-marker
+            v-for="item in enterpriseList"
+            :key="item.index"
+            :position.sync="item.positionList"
+            :label="{
+              content: item.fisheryName,
+            }"
+          />
           <amap-satellite-layer :visible="satellite" />
           <amap-scale position="LB" />
           <amap-tool-bar
@@ -187,8 +197,10 @@ import {
   updateDevice
 } from "@/api/device";
 import {
+  getEnterpriseList,
   getEnterpriseDetail
 } from "@/api/enterprise";
+import { mapGetters } from "vuex";
 const defaultListQuery = {
   pageNum: 1,
   pageSize: 100000,
@@ -218,7 +230,7 @@ export default {
     return {
       activeName: "first",
       tabStretch: true,
-      center: [119.615241, 30.611064],
+      center: [119.498540, 30.627345],
       position: null,
       zoom: 17,
       satellite: true,
@@ -233,12 +245,17 @@ export default {
       polygonList: [],
       listQuery: Object.assign({}, defaultListQuery),
       blockList: null,
+      enterpriseList: null,
       deleteBlockIds: [],
       allDeviceList: [],
       freeDeviceList: [],
       dialogVisible: false,
       multipleSelection: [],
-      enterpriseName: '全部'
+      enterpriseName: '全部',
+      positionA: [119.498540,30.627345],
+      positionB: [119.581168,30.805163],
+      positionTextA: '赋石水库',
+      positionTextB: '安吉天子湖露新家庭农场',
     };
   },
   created() {
@@ -250,6 +267,7 @@ export default {
     this.getAllDevice();
   },
   computed: {
+    ...mapGetters(["enterpriseId"]),
     $map() {
       return this.$refs.myMap.$map;
     },
@@ -303,6 +321,37 @@ export default {
       });
     },
     getList() {
+      if (this.enterpriseId == -1) {
+        getEnterpriseList(this.listQuery).then((response) => {
+          let list = response.data.list;
+          for (let i=0; i<list.length; i++) {
+            let positionList = list[i]['fisheryPosition'].split(',')
+            list[i]['positionList'] = []
+            for (let j=0; j<positionList.length; j++) {
+              list[i]['positionList'].push(parseFloat(positionList[j]))
+            }
+          }
+          if (list.length > 0) {
+            this.center = list[0]['positionList']
+          }
+          this.enterpriseList = list;
+          this.getBlockList();
+        });
+      } else {
+        getEnterpriseDetail(this.enterpriseId).then((response) => {
+          let data = response.data;
+          let positionList = data['fisheryPosition'].split(',')
+          data['positionList'] = []
+          for (let j=0; j<positionList.length; j++) {
+            data['positionList'].push(parseFloat(positionList[j]))
+          }
+          this.center = data['positionList']
+          this.enterpriseList = [data];
+          this.getBlockList();
+        });
+      }
+    },
+    getBlockList() {
       fetchList(this.listQuery).then((response) => {
         this.blockList = response.data.list;
         let polygonList = [];
@@ -385,11 +434,17 @@ export default {
     clear() {
       this.$refs.myMap.$map.clearMap();
     },
-    async setFitView(map) {
+    async fitView(map) {
       this.ready = true;
       //   await this.$nextTick();
       //   const topn = this.$refs.polygons.slice(0, 5).map((p) => p.$target);
       //   map.setFitView(topn);
+      setTimeout(() => {
+        this.$map.setFitView(null, false, [200, 200, 200, 200]);
+        if (this.enterpriseId != -1) {
+          this.$map.setZoom(17);
+        }
+      }, 1000)
     },
     undoDraw() {},
     redoDraw() {},
@@ -414,8 +469,13 @@ export default {
           item.editable = item.current;
           if (item.editable) {
             this.currentBlock = item;
+            if (item.path.length > 0) {
+              this.$map.setCenter(item.path[0]);
+              this.$map.setZoom(17);
+            }
           } else {
             this.currentBlock = null;
+            this.fitView();
           }
         } else {
           item.current = false;

@@ -1,5 +1,4 @@
 <template>
-   
   <div class="app-container">
     <el-card class="filter-container" shadow="never">
       <div>
@@ -84,6 +83,16 @@
             >{{ scope.row.annualYield }}
             <span v-if="scope.row.annualYield">kg</span>
           </template>
+        </el-table-column>
+        <el-table-column label="渔场坐标" align="center">
+          <template slot-scope="scope">{{
+            scope.row.fisheryPosition
+          }}</template>
+        </el-table-column>
+        <el-table-column label="渔场名称" align="center">
+          <template slot-scope="scope">{{
+            scope.row.fisheryName
+          }}</template>
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">

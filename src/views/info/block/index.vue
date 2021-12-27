@@ -10,7 +10,7 @@
     <el-main>
       <el-row :gutter="12">
         <el-col :span="6" v-for="item in list" :key="item.id">
-          <el-card shadow="hover">
+          <el-card shadow="hover" style="margin-bottom: 10px;">
             <div slot="header" class="clearfix">
               <span class="card-title">{{ item.name }}</span>
               <el-button

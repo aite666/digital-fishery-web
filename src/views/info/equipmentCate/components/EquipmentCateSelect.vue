@@ -71,7 +71,6 @@ export default {
       this.getList();
     },
     getList() {
-      debugger 
       fetchList(this.listQuery).then((response) => {
         let list = response.data.list;
         let equipmentCateSelectedInfo = {};
