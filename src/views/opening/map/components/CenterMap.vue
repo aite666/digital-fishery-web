@@ -10,6 +10,7 @@
         :zoom.sync="zoom"
         :pitch.sync="pitch"
         :center.sync="center"
+        @complete="fitView"
         @hotspotclick="onHotspotClick"
         view-mode="3D"
         :show-label="showLabel"
@@ -36,7 +37,14 @@
           "
         >
         </amap-polygon>
-        <amap-satellite-layer :visible="satellite" :show-label="showLabel"/>
+        <amap-satellite-layer :visible="satellite" :show-label="showLabel" />
+        <amap-marker
+          v-for="subItem in enterpriseList"
+          :key="subItem.index"
+          :position.sync="subItem.positionList"
+        >
+          <div class="marker-using-slot">{{subItem.fisheryName}}</div>
+        </amap-marker>
       </amap>
     </div>
     <div class="total-statistic d-f">
@@ -68,7 +76,9 @@
           :key="item.index"
           @mouseover="hoverPolygon = item"
           @click="
-            activePolygon ? (activePolygon = null) : (activePolygon = item)
+            activePolygon && activePolygon.index == item.index
+              ? (activePolygon = null)
+              : (activePolygon = item)
           "
         >
           <span
@@ -90,17 +100,19 @@ import {
   deleteBlock,
   getBlockDetail,
 } from "@/api/block";
+import { getEnterpriseList, getEnterpriseDetail } from "@/api/enterprise";
 import { getLiveWeather, getForecastWeather } from "@/api/weather";
 import { getProductCategoryList, getBatchList } from "@/api/batch";
 import { getDeviceList } from "@/api/device";
 import { getInspectionList } from "@/api/inspection";
 import { formatDate } from "@/utils/date";
+import { mapGetters } from "vuex";
 
 const defaultListQuery = {
   pageNum: 1,
   pageSize: 100000,
   name: null,
-  enterpriseId: null
+  enterpriseId: null,
 };
 const defaultPolygon = {
   id: null,
@@ -117,7 +129,7 @@ export default {
   components: {},
   data() {
     return {
-      center: [119.615241, 30.611064],
+      center: [119.49854, 30.627345],
       position: null,
       zoom: 17,
       pitch: 0,
@@ -131,11 +143,12 @@ export default {
       path: [],
       editable: false,
       draggable: true,
-      showLabel: false,
+      showLabel: true,
       fill: "#409EFF",
       polygonList: [],
       listQuery: Object.assign({}, defaultListQuery),
       blockList: null,
+      enterpriseList: null,
       hoverPolygon: null,
       activePolygon: null,
       cityCode: "330523",
@@ -184,24 +197,65 @@ export default {
         this.getProductCategoryStats(null);
         this.getTodayNum(null);
         this.getInspectionList(null);
-        this.changeBlockSelected(null)
+        this.changeBlockSelected(null);
+        this.fitView();
       } else {
         this.getDeviceNum(val.id);
         this.getProductCategoryStats(val.id);
         this.getTodayNum(val.id);
         this.getInspectionList(val.id);
-        this.changeBlockSelected(val)
+        this.changeBlockSelected(val);
+        if (val.path.length > 0) {
+          this.$map.setCenter(val.path[0]);
+          this.$map.setZoom(17);
+        }
       }
     },
   },
   computed: {
-    positionText() {
-      if (!this.position) return "";
-      return `${this.position[0]}, ${this.position[1]}`;
+    ...mapGetters(["enterpriseId"]),
+    $map() {
+      return this.$refs.myMap.$map;
     },
   },
   methods: {
     getList() {
+      if (this.enterpriseId == -1 && this.listQuery.enterpriseId == null) {
+        getEnterpriseList(this.listQuery).then((response) => {
+          let list = response.data.list;
+          for (let i = 0; i < list.length; i++) {
+            let positionList = list[i]["fisheryPosition"].split(",");
+            list[i]["positionList"] = [];
+            for (let j = 0; j < positionList.length; j++) {
+              list[i]["positionList"].push(parseFloat(positionList[j]));
+            }
+          }
+          if (list.length > 0) {
+            this.center = list[0]["positionList"];
+          }
+          this.enterpriseList = list;
+          console.log(this.enterpriseList);
+          this.getBlockList();
+        });
+      } else {
+        let enterpriseId = this.enterpriseId;
+        if (enterpriseId == -1) {
+          enterpriseId = this.listQuery.enterpriseId;
+        }
+        getEnterpriseDetail(enterpriseId).then((response) => {
+          let data = response.data;
+          let positionList = data["fisheryPosition"].split(",");
+          data["positionList"] = [];
+          for (let j = 0; j < positionList.length; j++) {
+            data["positionList"].push(parseFloat(positionList[j]));
+          }
+          this.center = data["positionList"];
+          this.enterpriseList = [data];
+          this.getBlockList();
+        });
+      }
+    },
+    getBlockList() {
       fetchList(this.listQuery).then((response) => {
         this.blockList = response.data.list;
         let polygonList = [];
@@ -216,7 +270,18 @@ export default {
           polygonList.push(polygon);
         }
         this.polygonList = polygonList;
+        this.fitView();
       });
+    },
+    async fitView() {
+      await this.$nextTick();
+      setTimeout(() => {
+        this.$map.setFitView(null, false, [50, 50, 50, 50]);
+        if (this.enterpriseId != -1 || this.listQuery.enterpriseId != null) {
+          console.log();
+          this.$map.setZoom(17);
+        }
+      }, 1000);
     },
     onHotspotClick(e) {
       if (e && e.lnglat) {
@@ -234,7 +299,8 @@ export default {
     handleUpdateMap() {
       let url = "/#/opening/iotVisual";
       if (this.listQuery.enterpriseId) {
-        url = "/#/opening/iotVisual?enterpriseId=" + this.listQuery.enterpriseId;
+        url =
+          "/#/opening/iotVisual?enterpriseId=" + this.listQuery.enterpriseId;
       }
       window.open(url, "_blank");
     },
@@ -332,7 +398,11 @@ export default {
         pageNum: 1,
         pageSize: 5,
         blockId: blockId,
-        startTime: formatDate(new Date(new Date().getTime() - 3600 * 1000 * 24 * 5), "yyyy-MM-dd") + " 00:00:00",
+        startTime:
+          formatDate(
+            new Date(new Date().getTime() - 3600 * 1000 * 24 * 5),
+            "yyyy-MM-dd"
+          ) + " 00:00:00",
         endTime: formatDate(new Date(), "yyyy-MM-dd") + " 23:59:59",
       };
       getInspectionList(query).then((response) => {
@@ -340,8 +410,8 @@ export default {
       });
     },
     changeBlockSelected(block) {
-      this.$emit('changeBlockSelected', block);
-    }
+      this.$emit("changeBlockSelected", block);
+    },
   },
 };
 </script>
@@ -560,10 +630,22 @@ side-card .water-log .inspection-data {
   font-family: PingFangSC-Semibold, "PingFang SC";
   font-weight: 600;
 }
+.marker-using-slot {
+  color: #000;
+  position: absolute;
+  z-index: 2;
+  border: 1px solid #00f;
+  background-color: #fff;
+  white-space: nowrap;
+  cursor: default;
+  padding: 3px;
+  font-size: 12px;
+  line-height: 14px;
+}
 </style>
 <style>
 .amap-copyright {
-   display: none !important;
+  display: none !important;
 }
 .amap-logo {
   display: none !important;
